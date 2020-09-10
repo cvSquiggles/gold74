@@ -1,5 +1,6 @@
 package scripts;
 
+import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
@@ -26,13 +27,18 @@ public class dayOne extends Script implements Loopable {
 
 	boolean hasEnteredDukeRoom = true;
 	boolean hasTalkedToDuke = true;
-	boolean hasReachedWizLadder;
-	boolean hasEnteredWizRoom;
-	boolean hasTalkedToWiz;
+	boolean hasReachedWizLadder = true;
+	boolean hasEnteredWizRoom = true;
+	boolean hasTalkedToWiz = true;
+	boolean hasExitedWizRoom = true;
+	boolean hasReachedVarrock;
 
 	RSArea dukesRoom = new RSArea(new RSTile(3209, 3223, 1), new RSTile(3210, 3225, 1));
-	RSArea wizLadder = new RSArea(new RSTile(3107, 3160, 0), new RSTile(3105, 3162, 0));
+	RSArea wizLadder = new RSArea(new RSTile(3103, 3161, 0), new RSTile(3104, 3165, 0));
 	RSArea wizRoom = new RSArea(new RSTile(3104, 9570, 0), new RSTile(3106, 9573, 0));
+	RSArea wizBasement = new RSArea(new RSTile(3103, 9577, 0), new RSTile(3110, 9556, 0));
+	RSArea exitWizRoom = new RSArea(new RSTile(3108, 9574, 0), new RSTile(3110, 9577, 0));
+	RSArea runeShop = new RSArea(new RSTile(3252, 3402, 0), new RSTile(3254, 3401, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -60,6 +66,7 @@ public class dayOne extends Script implements Loopable {
 	public int onLoop() {
 		// TODO Auto-generated method stub
 		switch (getState()) {
+
 		case WALKTODUKEROOM:
 			println("Case: WALKTODUKEROOM");
 
@@ -128,6 +135,7 @@ public class dayOne extends Script implements Loopable {
 
 			}
 			break;
+
 		case WALKTOWIZ:
 			println("Case: WALKTOWIZ");
 
@@ -143,13 +151,31 @@ public class dayOne extends Script implements Loopable {
 						return wizLadder.contains(Player.getPosition());
 					}
 				}, General.randomLong(10000, 12000))) {
-					hasReachedWizLadder = true;
 				}
 				;
+
+				if (wizLadder.contains(Player.getPosition())) {
+					RSObject[] ladders = Objects.findNearest(20, "Ladder");
+					if (ladders[0] != null) {
+						RSObject ladder = ladders[0];
+						General.sleep(General.random(200, 300));
+
+						if (!wizBasement.contains(Player.getPosition())) {
+							ladder.click("Climb-down");
+						}
+					}
+				}
+
+				General.sleep(1500, 2000);
+
+				if (wizBasement.contains(Player.getPosition())) {
+					hasReachedWizLadder = true;
+				}
 			}
 
-			if (!hasEnteredWizRoom) {
+			if (!hasEnteredWizRoom && hasReachedWizLadder) {
 				println("Walking to wizRoom.");
+
 				WebWalking.walkTo(wizRoom.getRandomTile());
 				WebWalking.setUseRun(false);
 
@@ -160,16 +186,127 @@ public class dayOne extends Script implements Loopable {
 						return wizRoom.contains(Player.getPosition());
 					}
 				}, General.randomLong(10000, 12000))) {
-					hasEnteredWizRoom = true;
 				}
 				;
+
+				if (wizRoom.contains(Player.getPosition())) {
+					hasEnteredWizRoom = true;
+				}
 			}
 
 			break;
-			
+
 		case TALKTOWIZ:
 			println("Case: TALKTOWIZ");
+
+			RSNPC[] wizs = NPCs.findNearest("Sedridor");
+			if (wizs[0] != null) {
+				RSNPC wiz = wizs[0];
+
+				if (!DynamicClicking.clickRSNPC(wiz, "Talk-to")) {
+					General.sleep(500, 750);
+					hasEnteredWizRoom = false;
+					break;
+				}
+
+				if (!Timing.waitCondition(new Condition() {
+					@Override
+					public boolean active() {
+						General.sleep(200);
+						return NPCChat.getName() != null;
+					}
+				}, General.randomLong(10000, 12000)))
+					;
+
+				NPCChat.clickContinue(false);
+				General.sleep(General.random(750, 800));
+				NPCChat.selectOption("head wizard.", false);
+				General.sleep(General.random(750, 800));
+				while (j <= 3) {
+					NPCChat.clickContinue(false);
+					General.sleep(General.random(1000, 1500));
+					j++;
+				}
+				j = 0;
+				General.sleep(General.random(750, 800));
+				println("Ok option");
+				NPCChat.selectOption("Ok", false);
+				while (j <= 6) {
+					NPCChat.clickContinue(false);
+					General.sleep(General.random(1000, 1500));
+					j++;
+				}
+				j = 0;
+				General.sleep(General.random(750, 800));
+				NPCChat.selectOption("Yes", false);
+				while (j <= 5) {
+					General.sleep(General.random(750, 800));
+					NPCChat.clickContinue(false);
+					General.sleep(General.random(750, 800));
+					j++;
+				}
+				j = 0;
+
+				if (Inventory.find("Research package").length > 0) {
+					hasTalkedToWiz = true;
+				}
+
+			} else {
+				General.sleep(200);
+				break;
+			}
+
+			break;
+
+		case WALKTOVARROCK:
+			println("Case: WALKTOVARROCK");
+
+			if (!hasExitedWizRoom) {
+				WebWalking.walkTo(exitWizRoom.getRandomTile());
+
+				if (!Timing.waitCondition(new Condition() {
+					@Override
+					public boolean active() {
+						General.sleep(200);
+						return exitWizRoom.contains(Player.getPosition());
+					}
+				}, General.randomLong(10000, 12000))) {
+				}
+				;
+
+				if (exitWizRoom.contains(Player.getPosition())) {
+					hasExitedWizRoom = true;
+				}
+			}
+
+			RSObject[] ladders = Objects.findNearest(20, "Ladder");
+			if (ladders[0] != null) {
+				RSObject ladder = ladders[0];
+				General.sleep(General.random(200, 300));
+
+				if (wizBasement.contains(Player.getPosition())) {
+					ladder.click("Climb-up");
+				}
+			}
+
 			General.sleep(5000);
+
+			WebWalking.walkTo(runeShop.getRandomTile());
+
+			if (!Timing.waitCondition(new Condition() {
+				@Override
+				public boolean active() {
+					General.sleep(200);
+					return runeShop.contains(Player.getPosition());
+				}
+			}, General.randomLong(180000, 200000))) {
+			}
+			;
+
+			println("You made it.");
+			General.sleep(5000);
+
+			break;
 		}
 		return 1000;
 
@@ -183,7 +320,7 @@ public class dayOne extends Script implements Loopable {
 
 	// State names
 	private enum State {
-		WALKTODUKEROOM, TALKTODUKE, WALKTOWIZ, TALKTOWIZ
+		WALKTODUKEROOM, TALKTODUKE, WALKTOWIZ, TALKTOWIZ, WALKTOVARROCK //After talk to Aubury, do WALKTOWIZ by setting ladder and wizRoom to false again. Item check end Aubury talk.
 	}
 
 	// Checks if a certain condition is met, then return that state.
@@ -199,6 +336,9 @@ public class dayOne extends Script implements Loopable {
 		}
 		if (hasEnteredWizRoom && !hasTalkedToWiz) {
 			state = State.TALKTOWIZ;
+		}
+		if (hasTalkedToWiz && !hasReachedVarrock) {
+			state = State.WALKTOVARROCK;
 		}
 		return state;
 	}
