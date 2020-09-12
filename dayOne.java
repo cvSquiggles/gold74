@@ -249,6 +249,7 @@ public class dayOne extends Script implements Loopable {
 
 				if (Inventory.find("Research package").length > 0) {
 					hasTalkedToWiz = true;
+					Inventory.find("Research package");
 				}
 
 			} else {
