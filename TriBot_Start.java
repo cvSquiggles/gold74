@@ -1,5 +1,10 @@
 package scripts;
 
+import org.tribot.api.Timing;
+import org.tribot.api2007.Inventory;
+import org.tribot.api2007.Skills;
+import org.tribot.api2007.Skills.SKILLS;
+import org.tribot.api2007.types.RSItem;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 
@@ -43,6 +48,19 @@ public class TriBot_Start extends Script implements Loopable {
 	public void onStop() {
 		// TODO Auto-generated method stub
 		println("Goodbye world.");
+	}
+	
+	private boolean isCurrentlyBusy() {
+		RSItem[] invoItems = Inventory.getAll();
+		int startXp = Skills.getXP(SKILLS.FLETCHING);
+		long t = System.currentTimeMillis();
+		while (Timing.timeFromMark(t) < 3000) {
+			if (invoItems.length > Inventory.getAll().length || Skills.getXP(SKILLS.FLETCHING) > startXp) {
+				return true;
+			}
+			sleep(100);
+		}
+		return false;
 	}
 	
 	// State names

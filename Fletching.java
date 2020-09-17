@@ -974,11 +974,6 @@ public class Fletching extends Script implements Loopable {
 						break;
 					}
 
-					//int BankedAB = Banking.find("Adamant bolts").length;
-					//int BankedRBT = Banking.find("Ruby bolt tips").length;
-
-					//println(BankedAB);
-					//println(BankedRBT);
 
 					Banking.withdraw(21999, "Adamant bolts");
 					General.sleep(4000);
