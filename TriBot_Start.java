@@ -50,6 +50,7 @@ public class TriBot_Start extends Script implements Loopable {
 		println("Goodbye world.");
 	}
 	
+	@SuppressWarnings("unused")
 	private boolean isCurrentlyBusy() {
 		RSItem[] invoItems = Inventory.getAll();
 		int startXp = Skills.getXP(SKILLS.FLETCHING);
@@ -75,4 +76,3 @@ public class TriBot_Start extends Script implements Loopable {
 	}
 
 }
-

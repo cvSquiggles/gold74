@@ -7,11 +7,13 @@ import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.Equipment.SLOTS;
+import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
 import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
+import org.tribot.api2007.Skills;
 import org.tribot.api2007.WebWalking;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSItem;
@@ -42,7 +44,10 @@ public class DruidicRitual extends Script implements Loopable {
 	RSArea druidsCircle = new RSArea(new RSTile(0, 0, 0), new RSTile(0, 0, 0));
 
 	@Override
-	public void onStart() {
+	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
+	// looping until -1 is returned, or you manually stop the script via TriBot.
+	public void run() {
+		onStart();
 
 		int i;
 
@@ -51,12 +56,17 @@ public class DruidicRitual extends Script implements Loopable {
 		}
 
 		onStop();
+	}
 
+	@Override
+	public void onStart() {
+		// TODO Auto-generated method stub
+		println("Hello world.");
 	}
 
 	@Override
 	public int onLoop() {
-
+		// TODO Auto-generated method stub
 		switch (getState()) {
 
 		case WALKTOKAQEMEEX:
@@ -64,7 +74,7 @@ public class DruidicRitual extends Script implements Loopable {
 			// If 'Games necklace(8)' is not equipped and Quest items aren't in inventory,
 			// then pull the items from the bank and equip 'Games necklace(8)'.
 
-			if (!Equipment.isEquipped(3853) && Inventory.find(2138, 2136, 2132, 2134, 8007).length < 6) {
+			if (!Equipment.isEquipped(3853)) {
 
 				println("Getting quest items.");
 
@@ -76,11 +86,42 @@ public class DruidicRitual extends Script implements Loopable {
 				}
 
 				else if (Banking.isBankScreenOpen()) {
+
+					int[] itemID = { 2138, 2136, 2134, 2132, 3853, 12625, 88, 11133 };
+					int[] itemID2 = { 8007, 22795 };
+
+					println(itemID2.length);
+
 					// Withdraws quest items using IDs.
-					Banking.withdraw(0, 2138, 2136, 2132, 2134, 8007, 3853);
-					General.random(100, 300);
+
+					
+					// WHAT THE FUCK DOES THIS DO?????????????????????
+					// WHAT THE FUCK DOES THIS DO?????????????????????
+					Banking.withdraw(1, 2138, 2136, 2132, 2134, 3853, 12625, 88, 11133);
+					// WHAT THE FUCK DOES THIS DO?????????????????????
+					// WHAT THE FUCK DOES THIS DO?????????????????????
+
+
+					
+					General.sleep(20000);
+
+					/*
+					 * if (!Timing.waitCondition(new Condition() {
+					 * 
+					 * @Override public boolean active() { General.sleep(200); return
+					 * (itemCheck(itemID, 0)); } }, General.randomLong(20000, 40000))) { } ;
+					 */
+					Banking.withdraw(5, 8007, 22795);
+					if (!Timing.waitCondition(new Condition() {
+						@Override
+						public boolean active() {
+							General.sleep(200);
+							return (itemCheck(itemID2, 5));
+						}
+					}, General.random(20000, 40000))) {
+					}
+					;
 				}
-				
 
 			}
 
@@ -120,39 +161,38 @@ public class DruidicRitual extends Script implements Loopable {
 			break;
 
 		}
-
-		return 100;
+		return 5;
 	}
 
 	@Override
 	public void onStop() {
-
-		println("Script stopped.");
-
+		// TODO Auto-generated method stub
+		println("Goodbye world.");
 	}
 
-	@Override
-	public void run() {
-
-		onStart();
-
-		int i;
-
-		while ((i = onLoop()) != -1) {
-			sleep(i);
+	@SuppressWarnings("unused")
+	private boolean isCurrentlyBusy() {
+		RSItem[] invoItems = Inventory.getAll();
+		int startXp = Skills.getXP(SKILLS.FLETCHING);
+		long t = System.currentTimeMillis();
+		while (Timing.timeFromMark(t) < 3000) {
+			if (invoItems.length > Inventory.getAll().length || Skills.getXP(SKILLS.FLETCHING) > startXp) {
+				return true;
+			}
+			sleep(100);
 		}
-
-		onStop();
-
+		return false;
 	}
 
+	// State names
 	private enum State {
 		WALKTOKAQEMEEX, TALKTOKAQEMEEX, WALKTOSANFEW, TALKTOSANFEW, WALKTOCAULDRON, INTERACTWITHCAULDRON,
 		RETURNTOSANFEW, RETURNTOKAQEMEEX
+
 	}
 
+	// Checks if a certain condition is met, then return that state.
 	private State getState() {
-
 		if (!hasWalkedToKaqemeex) {
 			state = State.WALKTOKAQEMEEX;
 		}
@@ -160,4 +200,22 @@ public class DruidicRitual extends Script implements Loopable {
 		return state;
 	}
 
+	private boolean itemCheck(int[] x, int y) {
+
+		int i = 0;
+
+		while (i <= x.length - 1) {
+
+			println(x.length - 1);
+
+			if (!(Inventory.getCount(x[i]) > y)) {
+				return (false);
+			}
+			;
+
+			i++;
+		}
+
+		return (true);
+	}
 }

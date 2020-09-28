@@ -17,6 +17,7 @@ import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
 
+@SuppressWarnings("deprecation") 
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "Rune Mysteries", version = 0.1, description = "Day one of scripting.")
 public class dayOne extends Script implements Loopable {
@@ -25,12 +26,12 @@ public class dayOne extends Script implements Loopable {
 
 	int j = 0;
 
-	boolean hasEnteredDukeRoom = true;
-	boolean hasTalkedToDuke = true;
-	boolean hasReachedWizLadder = true;
-	boolean hasEnteredWizRoom = true;
-	boolean hasTalkedToWiz = true;
-	boolean hasExitedWizRoom = true;
+	boolean hasEnteredDukeRoom;
+	boolean hasTalkedToDuke;
+	boolean hasReachedWizLadder;
+	boolean hasEnteredWizRoom;
+	boolean hasTalkedToWiz;
+	boolean hasExitedWizRoom;
 	boolean hasReachedVarrock;
 
 	RSArea dukesRoom = new RSArea(new RSTile(3209, 3223, 1), new RSTile(3210, 3225, 1));
@@ -61,7 +62,6 @@ public class dayOne extends Script implements Loopable {
 		println("Hello world.");
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public int onLoop() {
 		// TODO Auto-generated method stub
