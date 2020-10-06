@@ -5,6 +5,7 @@ import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Banking;
+import org.tribot.api2007.ChooseOption;
 import org.tribot.api2007.Equipment;
 import org.tribot.api2007.Equipment.SLOTS;
 import org.tribot.api2007.Skills.SKILLS;
@@ -31,7 +32,9 @@ public class DruidicRitual extends Script implements Loopable {
 	State state;
 
 	int j = 1;
+	int gamesNecklace = 3855;
 
+	boolean banking = true;
 	boolean hasWalkedToKaqemeex;
 	boolean hasTalkedToKaqemeex;
 	boolean hasWalkedToSanfew;
@@ -69,12 +72,12 @@ public class DruidicRitual extends Script implements Loopable {
 		// TODO Auto-generated method stub
 		switch (getState()) {
 
-		case WALKTOKAQEMEEX:
+		case BANKING:
 
 			// If 'Games necklace(8)' is not equipped and Quest items aren't in inventory,
 			// then pull the items from the bank and equip 'Games necklace(8)'.
 
-			if (!Equipment.isEquipped(3853)) {
+			if (!banking) {
 
 				println("Getting quest items.");
 
@@ -90,28 +93,22 @@ public class DruidicRitual extends Script implements Loopable {
 					int[] itemID = { 2138, 2136, 2134, 2132, 3853, 12625, 88, 11133 };
 					int[] itemID2 = { 8007, 22795 };
 
-					println(itemID2.length);
-
 					// Withdraws quest items using IDs.
 
-					
-					// WHAT THE FUCK DOES THIS DO?????????????????????
-					// WHAT THE FUCK DOES THIS DO?????????????????????
-					Banking.withdraw(1, 2138, 2136, 2132, 2134, 3853, 12625, 88, 11133);
-					// WHAT THE FUCK DOES THIS DO?????????????????????
-					// WHAT THE FUCK DOES THIS DO?????????????????????
+					withdrawItems(itemID, 1);
 
+					if (!Timing.waitCondition(new Condition() {
+						@Override
+						public boolean active() {
+							General.sleep(200);
+							return (itemCheck(itemID, 1));
+						}
+					}, General.random(20000, 40000))) {
+					}
+					;
 
-					
-					General.sleep(20000);
+					withdrawItems(itemID2, 5);
 
-					/*
-					 * if (!Timing.waitCondition(new Condition() {
-					 * 
-					 * @Override public boolean active() { General.sleep(200); return
-					 * (itemCheck(itemID, 0)); } }, General.randomLong(20000, 40000))) { } ;
-					 */
-					Banking.withdraw(5, 8007, 22795);
 					if (!Timing.waitCondition(new Condition() {
 						@Override
 						public boolean active() {
@@ -121,14 +118,38 @@ public class DruidicRitual extends Script implements Loopable {
 					}, General.random(20000, 40000))) {
 					}
 					;
+
+					General.sleep(10000, 20000);
+					if (itemCheck(itemID, 1) && itemCheck(itemID2, 5)) {
+						banking = true;
+					}
+
+					if (banking) {
+						Banking.close();
+						General.sleep(500, 1000);
+
+					}
 				}
 
 			}
 
-			else if (Equipment.isEquipped(3853) && Inventory.find(2138, 2136, 2132, 2134, 8007).length == 5) {
-				println("Teleporting to Burthorpe.");
+			break;
 
-			}
+		case WALKTOKAQEMEEX:
+//			FUCK YEAH BITCH
+
+			RSItem[] GamesNecks = Inventory.find(gamesNecklace);
+			RSItem GamesNeck = GamesNecks[0];
+			GamesNeck.click("Rub");
+
+			General.sleep(5000);
+
+			String[] Options = NPCChat.getOptions();
+
+			println(Options[0]);
+			NPCChat.selectOption("Burthorpe", true);
+
+			General.sleep(5000, 10000);
 
 			break;
 
@@ -161,7 +182,7 @@ public class DruidicRitual extends Script implements Loopable {
 			break;
 
 		}
-		return 5;
+		return 50;
 	}
 
 	@Override
@@ -186,14 +207,19 @@ public class DruidicRitual extends Script implements Loopable {
 
 	// State names
 	private enum State {
-		WALKTOKAQEMEEX, TALKTOKAQEMEEX, WALKTOSANFEW, TALKTOSANFEW, WALKTOCAULDRON, INTERACTWITHCAULDRON,
+		BANKING, WALKTOKAQEMEEX, TALKTOKAQEMEEX, WALKTOSANFEW, TALKTOSANFEW, WALKTOCAULDRON, INTERACTWITHCAULDRON,
 		RETURNTOSANFEW, RETURNTOKAQEMEEX
 
 	}
 
 	// Checks if a certain condition is met, then return that state.
 	private State getState() {
-		if (!hasWalkedToKaqemeex) {
+
+		if (!banking) {
+			state = State.BANKING;
+		}
+
+		if (!hasWalkedToKaqemeex && banking) {
 			state = State.WALKTOKAQEMEEX;
 		}
 
@@ -206,9 +232,7 @@ public class DruidicRitual extends Script implements Loopable {
 
 		while (i <= x.length - 1) {
 
-			println(x.length - 1);
-
-			if (!(Inventory.getCount(x[i]) > y)) {
+			if (!(Inventory.getCount(x[i]) >= y)) {
 				return (false);
 			}
 			;
@@ -217,5 +241,21 @@ public class DruidicRitual extends Script implements Loopable {
 		}
 
 		return (true);
+	}
+
+	private boolean withdrawItems(int[] x, int y) {
+
+		int i = 0;
+
+		while (i <= x.length - 1) {
+
+			Banking.withdraw(y, x[i]);
+			General.random(1325, 2178);
+
+			i++;
+		}
+
+		return (false);
+
 	}
 }
