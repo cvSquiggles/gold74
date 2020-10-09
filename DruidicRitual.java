@@ -23,6 +23,8 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
+import org.tribot.script.interfaces.NPCClicking;
+import org.tribot.api.util.abc.*;
 
 @SuppressWarnings({ "unused", "deprecation" })
 @ScriptManifest(authors = {
@@ -32,9 +34,12 @@ public class DruidicRitual extends Script implements Loopable {
 	State state;
 
 	int j = 1;
-	int gamesNecklace = 3855;
+	int gamesNecklace = 3853;
 
-	boolean banking = true;
+	public ABCUtil abc;
+
+	boolean banking;
+	boolean hasTeleported;
 	boolean hasWalkedToKaqemeex;
 	boolean hasTalkedToKaqemeex;
 	boolean hasWalkedToSanfew;
@@ -44,7 +49,7 @@ public class DruidicRitual extends Script implements Loopable {
 	boolean hasReturnedToSanfew;
 	boolean hasReturnedToKaqemeex;
 
-	RSArea druidsCircle = new RSArea(new RSTile(0, 0, 0), new RSTile(0, 0, 0));
+	RSArea druidsCircle = new RSArea(new RSTile(2922, 3486, 0), new RSTile(2929, 3481, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -65,6 +70,7 @@ public class DruidicRitual extends Script implements Loopable {
 	public void onStart() {
 		// TODO Auto-generated method stub
 		println("Hello world.");
+
 	}
 
 	@Override
@@ -136,24 +142,56 @@ public class DruidicRitual extends Script implements Loopable {
 			break;
 
 		case WALKTOKAQEMEEX:
-//			FUCK YEAH BITCH
 
-			RSItem[] GamesNecks = Inventory.find(gamesNecklace);
-			RSItem GamesNeck = GamesNecks[0];
-			GamesNeck.click("Rub");
+			if (!hasTeleported) {
 
-			General.sleep(5000);
+				RSItem[] GamesNecks = Inventory.find(gamesNecklace);
+				RSItem GamesNeck = GamesNecks[0];
+				GamesNeck.click("Rub");
 
-			String[] Options = NPCChat.getOptions();
+				General.sleep(5000);
 
-			println(Options[0]);
-			NPCChat.selectOption("Burthorpe", true);
+				String[] Options = NPCChat.getOptions();
 
-			General.sleep(5000, 10000);
+				println(Options[0]);
+				NPCChat.selectOption("Burthorpe", true);
+
+				General.sleep(5000, 10000);
+
+				if (Inventory.find(gamesNecklace).length == 0) {
+					hasTeleported = true;
+				}
+
+				else
+					break;
+			}
+
+			if (!druidsCircle.contains(Player.getPosition())) {
+
+				
+				println(Player.getPosition());
+				WebWalking.walkTo(druidsCircle.getRandomTile());
+				
+				General.sleep(5000, 10000);
+//				abc.leaveGame();
+
+				if (druidsCircle.contains(Player.getPosition())) {
+					hasWalkedToKaqemeex = true;
+				}
+
+				else
+					break;
+
+			}
 
 			break;
 
 		case TALKTOKAQEMEEX:
+
+			RSNPC[] Kaqemeexs = NPCs.findNearest(5045);
+			RSNPC Kaqemeex = Kaqemeexs[0];
+			Kaqemeex.adjustCameraTo();
+			Kaqemeex.click("Talk-to");
 
 			break;
 
@@ -221,6 +259,10 @@ public class DruidicRitual extends Script implements Loopable {
 
 		if (!hasWalkedToKaqemeex && banking) {
 			state = State.WALKTOKAQEMEEX;
+		}
+		
+		if (!hasTalkedToKaqemeex && hasWalkedToKaqemeex) {
+			state = State.TALKTOKAQEMEEX;
 		}
 
 		return state;
