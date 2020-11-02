@@ -45,8 +45,8 @@ public class DruidicRitual extends Script implements Loopable {
 	boolean hasTeleported = true;
 	boolean hasWalkedToKaqemeex = true;
 	boolean hasTalkedToKaqemeex = true;
-	boolean hasWalkedToSanfew;
-	boolean hasTalkedToSanfew;
+	boolean hasWalkedToSanfew = true;
+	boolean hasTalkedToSanfew = true;
 	boolean hasWalkedToCauldron;
 	boolean hasInteractedWithCauldron;
 	boolean hasReturnedToSanfew;
@@ -54,6 +54,7 @@ public class DruidicRitual extends Script implements Loopable {
 
 	RSArea druidsCircle = new RSArea(new RSTile(2922, 3486, 0), new RSTile(2929, 3481, 0));
 	RSArea sanfewsRoom = new RSArea(new RSTile(2897, 3431, 0), new RSTile(2899, 3425, 0));
+	RSArea sanfewsRoom2 = new RSArea(new RSTile(2896, 3429, 1), new RSTile(2900, 3426, 1));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -262,13 +263,20 @@ public class DruidicRitual extends Script implements Loopable {
 		case WALKTOSANFEW:
 
 			if (!sanfewsRoom.contains(Player.getPosition())) {
-				
+
 				println("Walking to Sanfew.");
 
 				WebWalking.walkTo(sanfewsRoom.getRandomTile());
+			}
 
-				if (druidsCircle.contains(Player.getPosition())) {
-					hasWalkedToKaqemeex = true;
+			if (!hasWalkedToSanfew) {
+				RSObject[] staircases = Objects.findNearest(20, 16671);
+				staircases[0].click("Climb-up");
+
+				General.sleep(General.randomSD(2000, 100), General.randomSD(2000, 100));
+
+				if (sanfewsRoom2.contains(Player.getPosition())) {
+					hasWalkedToSanfew = true;
 				}
 			}
 
@@ -276,9 +284,39 @@ public class DruidicRitual extends Script implements Loopable {
 
 		case TALKTOSANFEW:
 
+			println("Talking to Sanfew.");
+
+			if (Game.getSetting(80) == 1) {
+				RSNPC[] Sanfews = NPCs.findNearest(5044);
+				RSNPC Sanfew = Sanfews[0];
+				Sanfew.adjustCameraTo();
+				Sanfew.click("Talk-to");
+				General.sleep(2000, 4000);
+				NPCChat.clickContinue(true);
+				General.sleep(300, 600);
+				NPCChat.selectOption("I've been sent to help purify the Varrock stone circle.", true);
+				General.sleep(300, 600);
+				NPCChat.clickContinue(true);
+				General.sleep(300, 600);
+				NPCChat.clickContinue(true);
+				General.sleep(300, 600);
+				NPCChat.clickContinue(true);
+				General.sleep(300, 600);
+				NPCChat.selectOption("Ok, I'll do that then.", false);
+				General.sleep(300, 600);
+				
+				if (Game.getSetting(80) > 1) {
+					hasTalkedToSanfew = true;
+					println("It's true!");
+				}
+			}
+
 			break;
 
 		case WALKTOCAULDRON:
+			
+			println("Walk to Cauldron.");
+			General.sleep(General.random(200, 400));
 
 			break;
 
@@ -330,37 +368,21 @@ public class DruidicRitual extends Script implements Loopable {
 
 		if (!banking2) {
 			state = State.BANKING;
-		}
-
-		if (!hasWalkedToKaqemeex && banking2) {
+		} else if (!hasWalkedToKaqemeex && banking2) {
 			state = State.WALKTOKAQEMEEX;
-		}
-
-		if (!hasTalkedToKaqemeex && hasWalkedToKaqemeex) {
+		} else if (!hasTalkedToKaqemeex && hasWalkedToKaqemeex) {
 			state = State.TALKTOKAQEMEEX;
-		}
-
-		if (!hasWalkedToSanfew && hasTalkedToKaqemeex) {
+		} else if (!hasWalkedToSanfew && hasTalkedToKaqemeex) {
 			state = State.WALKTOSANFEW;
-		}
-
-		if (!hasTalkedToSanfew && hasWalkedToSanfew) {
+		} else if (!hasTalkedToSanfew && hasWalkedToSanfew) {
 			state = State.TALKTOSANFEW;
-		}
-
-		if (!hasWalkedToCauldron && hasTalkedToSanfew) {
+		} else if (!hasWalkedToCauldron && hasTalkedToSanfew) {
 			state = State.WALKTOCAULDRON;
-		}
-
-		if (!hasInteractedWithCauldron && hasWalkedToCauldron) {
+		} else if (!hasInteractedWithCauldron && hasWalkedToCauldron) {
 			state = State.INTERACTWITHCAULDRON;
-		}
-
-		if (!hasReturnedToSanfew && hasInteractedWithCauldron) {
+		} else if (!hasReturnedToSanfew && hasInteractedWithCauldron) {
 			state = State.RETURNTOSANFEW;
-		}
-
-		if (!hasReturnedToKaqemeex && hasReturnedToSanfew) {
+		} else if (!hasReturnedToKaqemeex && hasReturnedToSanfew) {
 			state = State.RETURNTOSANFEW;
 		}
 		return state;
@@ -399,21 +421,15 @@ public class DruidicRitual extends Script implements Loopable {
 
 	}
 
-/*	public boolean travel(RSArea x, int y, int z) {
-	    while (!x.contains(Player.getPosition())) {
-	        if (//get run energy method < General.random(y, z)) {
-	            Options.setRunOn(false);
-	        } else {
-	        	
-	        	if(!Options.isRunEnabled()) {
-	        	Options.setRunOn(true);
-	        	}
-	        }
-
-	        WebWalking.walkTo(x.getRandomTile());
-
-	        General.randomSD(2500, 500);
-	        General.sleep(2500, 3000);
-	    }
-*/
+	/*
+	 * public boolean travel(RSArea x, int y, int z) { while
+	 * (!x.contains(Player.getPosition())) { if (//get run energy method <
+	 * General.random(y, z)) { Options.setRunOn(false); } else {
+	 * 
+	 * if(!Options.isRunEnabled()) { Options.setRunOn(true); } }
+	 * 
+	 * WebWalking.walkTo(x.getRandomTile());
+	 * 
+	 * General.randomSD(2500, 500); General.sleep(2500, 3000); }
+	 */
 }
