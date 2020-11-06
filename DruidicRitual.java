@@ -47,14 +47,18 @@ public class DruidicRitual extends Script implements Loopable {
 	boolean hasTalkedToKaqemeex = true;
 	boolean hasWalkedToSanfew = true;
 	boolean hasTalkedToSanfew = true;
-	boolean hasWalkedToCauldron;
-	boolean hasInteractedWithCauldron;
+	boolean hasWalkedToCauldronLadder = true;
+	boolean hasWalkedToCauldron = true;
+	boolean hasInteractedWithCauldron = true;
 	boolean hasReturnedToSanfew;
 	boolean hasReturnedToKaqemeex;
 
 	RSArea druidsCircle = new RSArea(new RSTile(2922, 3486, 0), new RSTile(2929, 3481, 0));
 	RSArea sanfewsRoom = new RSArea(new RSTile(2897, 3431, 0), new RSTile(2899, 3425, 0));
 	RSArea sanfewsRoom2 = new RSArea(new RSTile(2896, 3429, 1), new RSTile(2900, 3426, 1));
+	RSArea cauldronLadder = new RSArea(new RSTile(2882, 3399, 0), new RSTile(2886, 3395, 0));
+	RSArea cauldronEnterance = new RSArea(new RSTile(2887, 9831, 0), new RSTile(2888, 9830, 0));
+	RSArea cauldronLadder2 = new RSArea(new RSTile(2885, 9798, 0), new RSTile(2883, 9796, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -125,7 +129,7 @@ public class DruidicRitual extends Script implements Loopable {
 							return (itemCheck(itemID2, 5));
 
 						}
-					}, General.random(20000, 40000)))
+					}, General.random(15000, 30000)))
 						;
 
 					General.sleep(General.randomSD(15000, 3000));
@@ -144,7 +148,7 @@ public class DruidicRitual extends Script implements Loopable {
 
 			if (banking1) {
 
-				println("Equipping Boots of lightness and Regen bracelet");
+				println("Equipping Boots of lightness and Regen bracelet.");
 
 				if (Inventory.find(88).length > 0 && Inventory.find(11133).length > 0) {
 
@@ -304,7 +308,7 @@ public class DruidicRitual extends Script implements Loopable {
 				General.sleep(300, 600);
 				NPCChat.selectOption("Ok, I'll do that then.", false);
 				General.sleep(300, 600);
-				
+
 				if (Game.getSetting(80) > 1) {
 					hasTalkedToSanfew = true;
 					println("It's true!");
@@ -314,17 +318,167 @@ public class DruidicRitual extends Script implements Loopable {
 			break;
 
 		case WALKTOCAULDRON:
-			
-			println("Walk to Cauldron.");
-			General.sleep(General.random(200, 400));
+
+			if (!hasWalkedToCauldron) {
+
+				println("Walking to Cauldron.");
+
+				if (sanfewsRoom2.contains(Player.getPosition())) {
+
+					RSObject[] staircases = Objects.findNearest(20, 16673);
+					staircases[0].click("Climb-down");
+					General.sleep(General.randomSD(2000, 100), General.randomSD(2000, 100));
+
+				}
+
+				if (!hasWalkedToCauldronLadder) {
+
+					WebWalking.walkTo(cauldronLadder.getRandomTile());
+					General.sleep(General.randomSD(2000, 100), General.randomSD(2000, 100));
+
+					if (cauldronLadder.contains(Player.getPosition()))
+						;
+
+					General.sleep(General.random(200, 400));
+					RSObject[] ladders = Objects.findNearest(20, 16680);
+					ladders[0].click("Climb-down");
+					General.sleep(General.random(600, 1000));
+
+					hasWalkedToCauldronLadder = true;
+
+					General.sleep(General.random(600, 1000));
+
+				}
+
+				if (hasWalkedToCauldronLadder) {
+
+					WebWalking.walkTo(cauldronEnterance.getRandomTile());
+					General.sleep(General.random(200, 400));
+
+				}
+			}
+
+			if (cauldronEnterance.contains(Player.getPosition())) {
+
+				RSObject[] deadArmors = Objects.findNearest(10, 818);
+				RSNPC[] aliveArmors = NPCs.findNearest(20, 5043);
+
+				if (aliveArmors.length > 1) {
+
+					RSObject[] Doors = Objects.findNearest(20, 2143);
+					Doors[0].click("Open");
+					General.sleep(General.random(1200, 1400));
+
+					hasWalkedToCauldron = true;
+
+				}
+
+				if (deadArmors.length > 0) {
+					RSObject[] Doors = Objects.findNearest(20, 2143);
+					Doors[0].click("Open");
+					General.sleep(General.random(1200, 1400));
+					Doors[0].click("Open");
+					General.sleep(General.random(600, 1000));
+					Doors[0].click("Open");
+					General.sleep(General.random(600, 1000));
+
+					hasWalkedToCauldron = true;
+				}
+			}
 
 			break;
 
 		case INTERACTWITHCAULDRON:
 
+			if (!hasInteractedWithCauldron) {
+
+				if (Inventory.find(2138).length > 0) {
+
+					RSItem[] chicken = Inventory.find(2138);
+					chicken[0].click("Use");
+					General.sleep(General.random(600, 800));
+					RSObject[] cauldron = Objects.findNearest(10, 2142);
+					cauldron[0].click("Use");
+					General.sleep(General.random(600, 800));
+
+				}
+
+				if (Inventory.find(2136).length > 0) {
+
+					RSItem[] bearMeat = Inventory.find(2136);
+					bearMeat[0].click("Use");
+					General.sleep(General.random(600, 800));
+					RSObject[] cauldron = Objects.findNearest(10, 2142);
+					cauldron[0].click("Use");
+					General.sleep(General.random(600, 800));
+
+				}
+
+				if (Inventory.find(2134).length > 0) {
+
+					RSItem[] ratMeat = Inventory.find(2134);
+					ratMeat[0].click("Use");
+					General.sleep(General.random(600, 800));
+					RSObject[] cauldron = Objects.findNearest(10, 2142);
+					cauldron[0].click("Use");
+					General.sleep(General.random(600, 800));
+
+				}
+
+				if (Inventory.find(2132).length > 0) {
+
+					RSItem[] beef = Inventory.find(2132);
+					beef[0].click("Use");
+					General.sleep(General.random(600, 800));
+					RSObject[] cauldron = Objects.findNearest(10, 2142);
+					cauldron[0].click("Use");
+					General.sleep(General.random(600, 800));
+
+				}
+
+				if (Inventory.find(2132, 2134, 2136, 2138).length == 0) {
+					hasInteractedWithCauldron = true;
+				}
+			}
+
 			break;
 
 		case RETURNTOSANFEW:
+
+			if (!hasReturnedToSanfew) {
+
+				/* if (booleanholder) {
+				RSObject[] Doors = Objects.findNearest(20, 2143);
+				Doors[0].click("Open");
+				General.sleep(General.random(1800, 2000));
+				*/
+				WebWalking.walkTo(cauldronLadder2.getRandomTile());
+				General.sleep(General.random(10000, 12000));
+				RSObject[] ladders = Objects.findNearest(20, 17385);
+				ladders[0].click("Climb-up");
+				
+				General.sleep(General.random(1800, 1400));
+				WebWalking.walkTo(sanfewsRoom.getRandomTile());
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						General.sleep(200);
+						return (sanfewsRoom.contains(Player.getPosition()));
+
+					}
+
+				}, General.random(30000, 40000)))
+					;
+
+				if (sanfewsRoom.contains(Player.getPosition())) {
+					RSObject[] staircases = Objects.findNearest(20, 16671);
+					staircases[0].click("Climb-up");
+
+					General.sleep(General.randomSD(2000, 100), General.randomSD(2000, 100));
+				}
+			}
 
 			break;
 
