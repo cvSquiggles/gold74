@@ -32,7 +32,7 @@ public class TheDigSite extends Script implements Loopable {
 	boolean equipping = true;
 	boolean hasWalkedToExamCentre = true;
 	boolean hasTalkedToExaminer = true;
-	boolean hasWalkedToMuseum;
+	boolean hasWalkedToMuseum = true;
 	boolean hasTalkedToCurator;
 	boolean hasReturnedToExamCentre;
 	boolean hasTalkedToExaminer2;
@@ -48,10 +48,9 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasReturnedToFemaleStudent;
 	boolean hasReturnedToStudentInOrange;
 	boolean hasReturnedToStudentInGreen;
-	
-	
 
 	RSArea examCentre = new RSArea(new RSTile(3361, 3342, 0), new RSTile(3363, 3340, 0));
+	RSArea museum = new RSArea(new RSTile(3258, 3450, 0), new RSTile(3254, 3447, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -241,9 +240,46 @@ public class TheDigSite extends Script implements Loopable {
 
 		case WALKTOVARROCKMUSEUM:
 
+			println("Case: WALKTOVARROCKMUSEUM");
+
+			if (!hasWalkedToMuseum) {
+
+				println("Walking to Exam Centre.");
+
+				DaxWalker.walkTo(museum.getRandomTile());
+				General.sleep(1800, 2400);
+
+				if (museum.contains(Player.getPosition())) {
+
+					hasWalkedToMuseum = true;
+
+				}
+
+			}
+
 			break;
 		case TALKTOCURATOR:
-			
+
+			println("Case: TALKTOCURATOR");
+
+			if (Game.getSetting(135) == 256) {
+
+				RSNPC[] Curators = NPCs.findNearest(5214);
+				RSNPC Curator = Curators[0];
+				Curator.adjustCameraTo();
+				Curator.click("Talk-to");
+				General.sleep(General.randomSD(2400, 300));
+
+				convoWait("c", 5);
+
+				println("You did it!");
+
+				if (Game.getSetting(135) == 768) {
+
+					hasTalkedToCurator = true;
+
+				}
+			}
 			break;
 		}
 		return 50;
@@ -342,45 +378,73 @@ public class TheDigSite extends Script implements Loopable {
 		}
 	}
 
-	public boolean convoWait(String x) {
-
+	public boolean convoWait(String x, int y) {
 		String currentMessage = NPCChat.getMessage();
 		General.sleep(600);
 		println(currentMessage);
 		if (x == "c") {
-			NPCChat.clickContinue(false);
-			General.sleep(General.randomSD(1200, 300));
+			int q = 0;
+			while (q <= y) {
+				NPCChat.clickContinue(false);
+				General.sleep(General.randomSD(1200, 300));
 
-			int i = 0;
-			while (NPCChat.getMessage() == null && NPCChat.getMessage().contains(currentMessage) && i < 5) {
+				int i = 0;
+				while (i <= 5) {
+					if (NPCChat.getMessage() == null) {
+						break;
+					}
 
-				println("Looping");
-				General.sleep(2400, 3000);
-				i++;
+					println("Looping");
+					General.sleep(2400, 3000);
 
-				if (NPCChat.getMessage() == null) {
-					break;
+					if (NPCChat.getMessage() == null) {
+						println("1AHHH");
+						break;
+					}
+
+					if (!NPCChat.getMessage().contains(currentMessage)) {
+						println("2AHHH");
+						break;
+					}
+
+					if (NPCChat.getMessage() == null) {
+						println("2");
+						return true;
+					}
+
+					if (!NPCChat.getMessage().contains(currentMessage) && q == y) {
+						println(NPCChat.getMessage());
+						println("1");
+						return true;
+					} else if (q == y)
+						println("Returned false");
+					return false;
 				}
+				q++;
 			}
-
-			General.sleep(General.randomSD(1800, 300));
-
-			if (NPCChat.getMessage() == null) {
-				return true;
-			}
-
-			if (!NPCChat.getMessage().contains(currentMessage)) {
-				println(NPCChat.getMessage());
-				return true;
-			} else
-				println("Returned false");
+			println("3");
 			return false;
 		} else {
-			NPCChat.selectOption(x, false);
-			General.sleep(General.randomSD(1200, 300));
-			return true;
-		}
+			if (NPCChat.getOptions() == null) {
+				return false;
+			}
+			String chatOptions[] = NPCChat.getOptions();
+			int q = 0;
+			while (q < chatOptions.length) {
+				General.sleep(300);
+				if (chatOptions[q].contains(x)) {
+					NPCChat.selectOption(x, false);
+					General.sleep(General.randomSD(1200, 300));
+					return true;
+				} else
+					q++;
 
+				if (q >= chatOptions.length) {
+					return false;
+				}
+			}
+		}
+		return false;
 	}
 
 }
