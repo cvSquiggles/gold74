@@ -5,15 +5,19 @@ import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Game;
+import org.tribot.api2007.GroundItems;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.NPCChat;
 import org.tribot.api2007.NPCs;
+import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.Skills.SKILLS;
 import org.tribot.api2007.types.RSArea;
+import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
 import org.tribot.api2007.types.RSNPC;
+import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
@@ -33,12 +37,13 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasWalkedToExamCentre = true;
 	boolean hasTalkedToExaminer = true;
 	boolean hasWalkedToMuseum = true;
-	boolean hasTalkedToCurator;
-	boolean hasReturnedToExamCentre;
-	boolean hasTalkedToExaminer2;
-	boolean hasFoundTeddyBear;
-	boolean hasFoundPanningTray;
-	boolean hasTalkedToPanningGuide;
+	boolean hasTalkedToCurator = true;
+	boolean hasReturnedToExamCentre = true;
+	boolean hasTalkedToExaminer2 = true;
+	boolean hasFoundTeddyBear = true;
+	boolean hasFoundPanningTray = true;
+	boolean hasTalkedToPanningGuide = true;
+	boolean hasWalkedToPanningPoint;
 	boolean hasFoundSpecialCup;
 	boolean hasFoundAnimalSkullAndSpecimenBrush;
 	boolean hasTalkedToFemaleStudent;
@@ -51,6 +56,9 @@ public class TheDigSite extends Script implements Loopable {
 
 	RSArea examCentre = new RSArea(new RSTile(3361, 3342, 0), new RSTile(3363, 3340, 0));
 	RSArea museum = new RSArea(new RSTile(3258, 3450, 0), new RSTile(3254, 3447, 0));
+	RSArea bush = new RSArea(new RSTile(3358, 3372, 0), new RSTile(3359, 3371, 0));
+	RSArea tent = new RSArea(new RSTile(3370, 3380, 0), new RSTile(3372, 3378, 0));
+	RSArea panningPoint = new RSArea(new RSTile(3377, 3380, 0), new RSTile(3379, 3378, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -150,11 +158,11 @@ public class TheDigSite extends Script implements Loopable {
 
 				println("Equipping leather boots and leather gloves.");
 
-				if (!equipItem(1061)) {
+				if (!useItem(1061, "Wear")) {
 					break;
 				}
 
-				if (!equipItem(1059)) {
+				if (!useItem(1059, "Wear")) {
 					break;
 				}
 
@@ -198,35 +206,9 @@ public class TheDigSite extends Script implements Loopable {
 				Examiner.adjustCameraTo();
 				Examiner.click("Talk-to");
 				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.selectOption("Can I take an exam?", false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
-				General.sleep(General.randomSD(2400, 300));
-				NPCChat.clickContinue(false);
+				convoWait("c", 6);
+				convoWait("Can I take an exam?", 0);
+				convoWait("c", 8);
 				General.sleep(General.randomSD(2400, 300));
 
 			}
@@ -258,11 +240,12 @@ public class TheDigSite extends Script implements Loopable {
 			}
 
 			break;
+
 		case TALKTOCURATOR:
 
-			println("Case: TALKTOCURATOR");
-
 			if (Game.getSetting(135) == 256) {
+
+				println("Talking to Curator.");
 
 				RSNPC[] Curators = NPCs.findNearest(5214);
 				RSNPC Curator = Curators[0];
@@ -272,8 +255,6 @@ public class TheDigSite extends Script implements Loopable {
 
 				convoWait("c", 5);
 
-				println("You did it!");
-
 				if (Game.getSetting(135) == 768) {
 
 					hasTalkedToCurator = true;
@@ -281,6 +262,183 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 			break;
+
+		case RETURNTOEXAMCENTRE:
+
+			if (!hasReturnedToExamCentre) {
+
+				println("Returning to Exam Centre.");
+
+				DaxWalker.walkTo(examCentre.getRandomTile());
+				General.sleep(1800, 2400);
+
+				if (examCentre.contains(Player.getPosition())) {
+
+					hasReturnedToExamCentre = true;
+
+				}
+
+			}
+
+			break;
+
+		case TALKTOEXAMINER2:
+
+			if (Game.getSetting(131) == 1) {
+
+				println("Talking to Examiner.");
+
+				RSNPC[] Examiners = NPCs.findNearest("Examiner");
+				RSNPC Examiner = Examiners[0];
+				Examiner.adjustCameraTo();
+				Examiner.click("Talk-to");
+				General.sleep(General.randomSD(2400, 300));
+
+//				delete
+				convoWait("c", 2);
+				convoWait("Yes", 0);
+				convoWait("c", 3);
+				convoWait("The", 0);
+				convoWait("c", 3);
+				convoWait("Magic", 0);
+				convoWait("c", 3);
+				convoWait("Rubber", 0);
+				convoWait("c", 6);
+//				delete
+
+//				keep
+//			convoWait("c", 5);
+//			convoWait("c", 5);
+//			convoWait("The", 0);
+//			convoWait("c", 3);
+//			convoWait("Magic", 0);
+//			convoWait("c", 3);
+//			convoWait("Rubber", 0);
+//			convoWait("c", 3);
+//				keep
+			}
+
+			if (Game.getSetting(131) == 2) {
+
+				hasTalkedToExaminer2 = true;
+
+			}
+
+			break;
+
+		case FINDTEDDYBEAR:
+
+			if (Inventory.find(673).length == 0) {
+
+				println("Walking to bush to pick up Teddy Bear.");
+
+				DaxWalker.walkTo(bush.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				RSObject[] bushes = Objects.findNearest(10, 2358);
+				bushes[0].click("Search");
+				General.sleep(General.randomSD(900, 300));
+
+			}
+
+			if (Inventory.find(673).length > 0) {
+
+				hasFoundTeddyBear = true;
+
+			}
+
+			break;
+
+		case FINDPANNINGTRAY:
+
+			if (Inventory.find(677).length == 0) {
+
+				println("Walking to tent to pick up Panning Tray.");
+
+				DaxWalker.walkTo(tent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				RSGroundItem[] panningTray = GroundItems.findNearest(677);
+				panningTray[0].click("Take");
+				General.sleep(General.randomSD(1800, 300));
+
+			}
+
+			if (Inventory.find(677).length > 0) {
+
+				hasFoundPanningTray = true;
+
+			}
+
+			break;
+
+		case TALKTOPANNINGGUIDE:
+
+			if (!hasTalkedToPanningGuide) {
+
+				println("Talking to Panning Guide.");
+
+				RSNPC[] PanningGuides = NPCs.findNearest(3640);
+				RSNPC PanningGuide = PanningGuides[0];
+				PanningGuide.adjustCameraTo();
+				PanningGuide.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 7);
+
+				if (NPCChat.getMessage().contains("Ah! Lovely!")) {
+
+					convoWait("c", 1);
+					hasTalkedToPanningGuide = true;
+
+				} else
+					break;
+
+			}
+
+			break;
+
+		case PANNING:
+
+			if (!hasWalkedToPanningPoint) {
+				
+				println("Walking to panning point.");
+				
+				DaxWalker.walkTo(panningPoint.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+				
+				if (panningPoint.contains(Player.getPosition())) {
+					
+					hasWalkedToPanningPoint = true;
+					
+				}
+				
+			}
+			
+			if (Inventory.find(672).length == 0) {
+				
+				println("Panning for Special Cup.");
+
+				RSObject[] panningPoint = Objects.findNearest(2, 2363);
+				panningPoint[0].click("Pan");
+				General.sleep(General.randomSD(4400, 300));
+
+				if (Inventory.find(679).length == 1) {
+
+					useItem(679, "Search");
+
+				}
+
+				if (Inventory.find(672).length == 1) {
+
+					hasFoundSpecialCup = true;
+
+				}
+
+			}
+
+			break;
+
 		}
 		return 50;
 	}
@@ -307,7 +465,8 @@ public class TheDigSite extends Script implements Loopable {
 
 	private enum State {
 
-		PREP, WALKTOEXAMCENTRE, TALKTOEXAMINER, WALKTOVARROCKMUSEUM, TALKTOCURATOR,
+		PREP, WALKTOEXAMCENTRE, TALKTOEXAMINER, WALKTOVARROCKMUSEUM, TALKTOCURATOR, RETURNTOEXAMCENTRE, TALKTOEXAMINER2,
+		FINDTEDDYBEAR, FINDPANNINGTRAY, TALKTOPANNINGGUIDE, PANNING
 
 	}
 
@@ -323,8 +482,19 @@ public class TheDigSite extends Script implements Loopable {
 			state = State.WALKTOVARROCKMUSEUM;
 		} else if (!hasTalkedToCurator && hasWalkedToMuseum) {
 			state = State.TALKTOCURATOR;
+		} else if (!hasReturnedToExamCentre && hasTalkedToCurator) {
+			state = State.RETURNTOEXAMCENTRE;
+		} else if (!hasTalkedToExaminer2 && hasReturnedToExamCentre) {
+			state = State.TALKTOEXAMINER2;
+		} else if (!hasFoundTeddyBear && hasTalkedToExaminer2) {
+			state = State.FINDTEDDYBEAR;
+		} else if (!hasFoundPanningTray && hasFoundTeddyBear) {
+			state = State.FINDPANNINGTRAY;
+		} else if (!hasTalkedToPanningGuide && hasFoundPanningTray) {
+			state = State.TALKTOPANNINGGUIDE;
+		} else if (!hasFoundSpecialCup && hasTalkedToPanningGuide) {
+			state = State.PANNING;
 		}
-
 		return state;
 	}
 
@@ -361,11 +531,11 @@ public class TheDigSite extends Script implements Loopable {
 		return (true);
 	}
 
-	public boolean equipItem(int itemID) {
+	public boolean useItem(int itemID, String y) {
 		if (Inventory.find(itemID).length > 0) {
 			RSItem[] x = Inventory.find(itemID);
 
-			x[0].click("Wear");
+			x[0].click(y);
 			General.sleep(600, 900);
 		} else {
 			return false;
@@ -379,12 +549,14 @@ public class TheDigSite extends Script implements Loopable {
 	}
 
 	public boolean convoWait(String x, int y) {
-		//Set string x = to "c" if you would like to simply click continue, and int y is the # of times to do so.
-		//Set string x = to whatever text is contained in the NPCChat.getOptions() option
-		//that you'd like to click, be sure to still enter a y value, good default is 0.
+		// Set string x = to "c" if you would like to simply click continue, and int y
+		// is the # of times to do so.
+		// Set string x = to whatever text is contained in the NPCChat.getOptions()
+		// option
+		// that you'd like to click, be sure to still enter a y value, good default is
+		// 0.
 		String currentMessage = NPCChat.getMessage();
 		General.sleep(600);
-		println(currentMessage);
 		if (x == "c") {
 			int q = 0;
 			while (q <= y) {
@@ -397,35 +569,30 @@ public class TheDigSite extends Script implements Loopable {
 						break;
 					}
 
-					println("Looping");
 					General.sleep(2400, 3000);
 
 					if (NPCChat.getMessage() == null) {
-						println("1AHHH");
+
 						break;
 					}
 
 					if (!NPCChat.getMessage().contains(currentMessage)) {
-						println("2AHHH");
+
 						break;
 					}
 
 					if (NPCChat.getMessage() == null) {
-						println("2");
+
 						return true;
 					}
 
 					if (!NPCChat.getMessage().contains(currentMessage) && q == y) {
-						println(NPCChat.getMessage());
-						println("1");
 						return true;
 					} else if (q == y)
-						println("Returned false");
-					return false;
+						return false;
 				}
 				q++;
 			}
-			println("3");
 			return false;
 		} else {
 			if (NPCChat.getOptions() == null) {
@@ -450,4 +617,34 @@ public class TheDigSite extends Script implements Loopable {
 		return false;
 	}
 
+	public boolean waitForConvo(String x) {
+
+		if (!Timing.waitCondition(new Condition() {
+
+			@Override
+			public boolean active() {
+
+				return (NPCChat.getName() != null);
+
+			}
+
+		}, General.random(15000, 20000)))
+			;
+
+		if (!Timing.waitCondition(new Condition() {
+
+			@Override
+			public boolean active() {
+
+				return (NPCChat.getName().contains(x));
+
+			}
+
+		}, General.random(15000, 20000)))
+			;
+		if (!NPCChat.getName().contains(x)) {
+			return false;
+		}
+		return true;
+	}
 }
