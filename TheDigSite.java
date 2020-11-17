@@ -379,6 +379,9 @@ public class TheDigSite extends Script implements Loopable {
 	}
 
 	public boolean convoWait(String x, int y) {
+		//Set string x = to "c" if you would like to simply click continue, and int y is the # of times to do so.
+		//Set string x = to whatever text is contained in the NPCChat.getOptions() option
+		//that you'd like to click, be sure to still enter a y value, good default is 0.
 		String currentMessage = NPCChat.getMessage();
 		General.sleep(600);
 		println(currentMessage);
