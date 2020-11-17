@@ -102,7 +102,6 @@ public class dayOne extends Script implements Loopable {
 					if (!Timing.waitCondition(new Condition() {
 						@Override
 						public boolean active() {
-							General.sleep(200);
 							return NPCChat.getName() != null;
 						}
 					}, General.randomLong(10000, 12000)))
