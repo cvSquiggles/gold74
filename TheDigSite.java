@@ -43,22 +43,41 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasFoundTeddyBear = true;
 	boolean hasFoundPanningTray = true;
 	boolean hasTalkedToPanningGuide = true;
-	boolean hasWalkedToPanningPoint;
-	boolean hasFoundSpecialCup;
-	boolean hasFoundAnimalSkullAndSpecimenBrush;
-	boolean hasTalkedToFemaleStudent;
-	boolean hasTalkedToStudentInOrange;
-	boolean hasTalkedToStudentInGreen;
-	boolean hasTalkedToExaminer3;
-	boolean hasReturnedToFemaleStudent;
-	boolean hasReturnedToStudentInOrange;
-	boolean hasReturnedToStudentInGreen;
+	boolean hasWalkedToPanningPoint = true;
+	boolean hasFoundSpecialCup = true;
+	boolean hasWalkedToWorkman = true;
+	boolean hasFoundAnimalSkullAndSpecimenBrush = true;
+	boolean hasWalkedToFemaleStudent = true;
+	boolean hasTalkedToFemaleStudent = true;
+	boolean hasWalkedToStudentInOrange = true;
+	boolean hasTalkedToStudentInOrange = true;
+	boolean hasWalkedToStudentInGreen = true;
+	boolean hasTalkedToStudentInGreen = true;
+	boolean hasReturnedToExamCentre2 = true;
+	boolean hasTalkedToExaminer3 = true;
+	boolean hasReturnedToFemaleStudent = true;
+	boolean hasReturnedToStudentInOrange = true;
+	boolean hasReturnedToStudentInGreen = true;
+	boolean hasReturnedToExamCentre3 = true;
+	boolean hasTalkedToExaminer4 = true;
+	boolean hasReturnedToFemaleStudent2 = true;
+	boolean hasReturnedToStudentInOrange2 = true;
+	boolean hasReturnedToStudentInGreen2 = true;
+	boolean hasReturnedToExamCentre4 = true;
+	boolean hasTalkedToExaminer5 = true;
+	boolean hasSearchedCupboards;
 
 	RSArea examCentre = new RSArea(new RSTile(3361, 3342, 0), new RSTile(3363, 3340, 0));
 	RSArea museum = new RSArea(new RSTile(3258, 3450, 0), new RSTile(3254, 3447, 0));
 	RSArea bush = new RSArea(new RSTile(3358, 3372, 0), new RSTile(3359, 3371, 0));
 	RSArea tent = new RSArea(new RSTile(3370, 3380, 0), new RSTile(3372, 3378, 0));
 	RSArea panningPoint = new RSArea(new RSTile(3377, 3380, 0), new RSTile(3379, 3378, 0));
+	RSArea workmanArea = new RSArea(new RSTile(3352, 3410, 0), new RSTile(3355, 3407, 0));
+	RSArea femaleStudent = new RSArea(new RSTile(3346, 3421, 0), new RSTile(3348, 3419, 0));
+	RSArea orangeStudent = new RSArea(new RSTile(3369, 3418, 0), new RSTile(3371, 3416, 0));
+	RSArea greenStudent = new RSArea(new RSTile(3362, 3400, 0), new RSTile(3364, 3398, 0));
+	RSArea cupboard1 = new RSArea(new RSTile(3355, 3333, 0), new RSTile(3354, 3333, 0));
+	RSArea cupboard2 = new RSArea(new RSTile(3356, 3336, 0), new RSTile(3355, 3336, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -218,6 +237,7 @@ public class TheDigSite extends Script implements Loopable {
 				hasTalkedToExaminer = true;
 
 			}
+
 			break;
 
 		case WALKTOVARROCKMUSEUM:
@@ -261,6 +281,7 @@ public class TheDigSite extends Script implements Loopable {
 
 				}
 			}
+
 			break;
 
 		case RETURNTOEXAMCENTRE:
@@ -316,6 +337,7 @@ public class TheDigSite extends Script implements Loopable {
 //			convoWait("Rubber", 0);
 //			convoWait("c", 3);
 //				keep
+
 			}
 
 			if (Game.getSetting(131) == 2) {
@@ -401,22 +423,22 @@ public class TheDigSite extends Script implements Loopable {
 		case PANNING:
 
 			if (!hasWalkedToPanningPoint) {
-				
+
 				println("Walking to panning point.");
-				
+
 				DaxWalker.walkTo(panningPoint.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
-				
+
 				if (panningPoint.contains(Player.getPosition())) {
-					
+
 					hasWalkedToPanningPoint = true;
-					
+
 				}
-				
+
 			}
-			
+
 			if (Inventory.find(672).length == 0) {
-				
+
 				println("Panning for Special Cup.");
 
 				RSObject[] panningPoint = Objects.findNearest(2, 2363);
@@ -439,8 +461,546 @@ public class TheDigSite extends Script implements Loopable {
 
 			break;
 
+		case STEALFROMWORKMAN:
+
+			if (!hasWalkedToWorkman) {
+
+				println("Walking to workman area.");
+
+				DaxWalker.walkTo(workmanArea.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (workmanArea.contains(Player.getPosition())) {
+
+					hasWalkedToWorkman = true;
+
+				}
+			}
+
+			if (Inventory.find(671).length < 1 || Inventory.find(670).length < 1) {
+
+				println("Stealing from Digsite workman.");
+
+				RSNPC[] digsiteWorkmans = NPCs.findNearest(3630);
+				RSNPC digsiteWorkman = digsiteWorkmans[0];
+				digsiteWorkman.adjustCameraTo();
+				digsiteWorkman.click("Steal-from");
+				General.sleep(General.randomSD(4800, 300));
+
+			}
+
+			if (Inventory.find(671).length == 1 && Inventory.find(670).length == 1) {
+
+				hasFoundAnimalSkullAndSpecimenBrush = true;
+
+			}
+
+			break;
+
+		case TALKTOFEMALESTUDENT:
+
+			if (!hasWalkedToFemaleStudent) {
+
+				println("Walking to female student.");
+
+				DaxWalker.walkTo(femaleStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (femaleStudent.contains(Player.getPosition())) {
+
+					hasWalkedToFemaleStudent = true;
+
+				}
+			}
+
+			if (Inventory.find(673).length == 1) {
+
+				println("Talking to female student.");
+
+				RSNPC[] femaleStudents = NPCs.findNearest(3634);
+				RSNPC femaleStudent = femaleStudents[0];
+				femaleStudent.adjustCameraTo();
+				femaleStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 7);
+
+			}
+
+			if (Inventory.find(673).length == 0) {
+
+				hasTalkedToFemaleStudent = true;
+
+			}
+
+			break;
+
+		case TALKTOORANGESTUDENT:
+
+			if (!hasWalkedToStudentInOrange) {
+
+				println("Walking to student in orange.");
+
+				DaxWalker.walkTo(orangeStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (orangeStudent.contains(Player.getPosition())) {
+
+					hasWalkedToStudentInOrange = true;
+
+				}
+			}
+
+			if (Inventory.find(672).length == 1) {
+
+				println("Talking to student in orange.");
+
+				RSNPC[] orangeStudents = NPCs.findNearest(3633);
+				RSNPC orangeStudent = orangeStudents[0];
+				orangeStudent.adjustCameraTo();
+				orangeStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 8);
+
+			}
+
+			if (Inventory.find(672).length == 0) {
+
+				hasTalkedToFemaleStudent = true;
+
+			}
+
+			break;
+
+		case TALKTOGREENSTUDENT:
+
+			if (!hasWalkedToStudentInGreen) {
+
+				println("Walking to student in green.");
+
+				DaxWalker.walkTo(greenStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (greenStudent.contains(Player.getPosition())) {
+
+					hasWalkedToStudentInGreen = true;
+
+				}
+			}
+
+			if (Inventory.find(671).length == 1) {
+
+				println("Talking to student in green.");
+
+				RSNPC[] greenStudents = NPCs.findNearest(3632);
+				RSNPC greenStudent = greenStudents[0];
+				greenStudent.adjustCameraTo();
+				greenStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 8);
+
+			}
+
+			if (Inventory.find(671).length == 0) {
+
+				hasTalkedToFemaleStudent = true;
+
+			}
+
+			break;
+
+		case RETURNTOEXAMCENTRE2:
+
+			if (!hasReturnedToExamCentre2) {
+
+				println("Returning to Exam Centre.");
+
+				DaxWalker.walkTo(examCentre.getRandomTile());
+				General.sleep(1800, 2400);
+
+				if (examCentre.contains(Player.getPosition())) {
+
+					hasReturnedToExamCentre2 = true;
+
+				}
+
+			}
+
+			break;
+
+		case TALKTOEXAMINER3:
+
+			if (Game.getSetting(131) == 2) {
+
+				println("Talking to Examiner.");
+
+				RSNPC[] Examiners = NPCs.findNearest("Examiner");
+				RSNPC Examiner = Examiners[0];
+				Examiner.adjustCameraTo();
+				Examiner.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 2);
+				convoWait("Yes", 0);
+				convoWait("c", 3);
+				convoWait("The study of the earth", 0);
+				convoWait("c", 3);
+				convoWait("All that have passed", 0);
+				convoWait("c", 3);
+				convoWait("Gloves and boots", 0);
+				convoWait("c", 5);
+				General.sleep(General.randomSD(2400, 300));
+
+				break;
+
+			}
+
+			if (Game.getSetting(131) == 3) {
+
+				hasTalkedToExaminer3 = true;
+
+			}
+
+			break;
+
+		case RETURNTOFEMALESTUDENT:
+
+			if (!hasReturnedToFemaleStudent) {
+
+				println("Walking to female student.");
+
+				DaxWalker.walkTo(femaleStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to female student.");
+
+				RSNPC[] femaleStudents = NPCs.findNearest(3634);
+				RSNPC femaleStudent = femaleStudents[0];
+				femaleStudent.adjustCameraTo();
+				femaleStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 5);
+
+			}
+
+			if (Game.getSetting(1021) == 512) {
+
+				hasReturnedToFemaleStudent = true;
+
+			}
+
+			break;
+
+		case RETURNTOORANGESTUDENT:
+
+			if (!hasReturnedToStudentInOrange) {
+
+				println("Walking to student in orange.");
+
+				DaxWalker.walkTo(orangeStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to student in orange.");
+
+				RSNPC[] orangeStudents = NPCs.findNearest(3633);
+				RSNPC orangeStudent = orangeStudents[0];
+				orangeStudent.adjustCameraTo();
+				orangeStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 5);
+
+			}
+
+			if (Game.getSetting(1021) == 0) {
+
+				hasReturnedToStudentInOrange = true;
+
+			}
+
+			break;
+
+		case RETURNTOGREENSTUDENT:
+
+			if (!hasReturnedToStudentInGreen) {
+
+				println("Walking to student in green.");
+
+				DaxWalker.walkTo(greenStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to student in green.");
+
+				RSNPC[] greenStudents = NPCs.findNearest(3632);
+				RSNPC greenStudent = greenStudents[0];
+				greenStudent.adjustCameraTo();
+				greenStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 5);
+				General.sleep(General.randomSD(2400, 300));
+
+				hasReturnedToStudentInGreen = true;
+
+			}
+
+			break;
+
+		case TALKTOEXAMINER4:
+
+			if (!hasReturnedToExamCentre3) {
+
+				println("Returning to Exam Centre.");
+
+				DaxWalker.walkTo(examCentre.getRandomTile());
+				General.sleep(1800, 2400);
+
+				if (examCentre.contains(Player.getPosition())) {
+
+					hasReturnedToExamCentre3 = true;
+
+				}
+
+			}
+
+			if (Game.getSetting(131) == 3) {
+
+				println("Talking to Examiner.");
+
+				RSNPC[] Examiners = NPCs.findNearest("Examiner");
+				RSNPC Examiner = Examiners[0];
+				Examiner.adjustCameraTo();
+				Examiner.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 2);
+				convoWait("I am ready", 0);
+				convoWait("c", 3);
+				convoWait("Samples taken in rough", 0);
+				convoWait("c", 3);
+				convoWait("Finds must be carefully", 0);
+				convoWait("c", 3);
+				convoWait("Always handle with care", 0);
+				convoWait("c", 5);
+				General.sleep(General.randomSD(2400, 300));
+
+				break;
+
+			}
+
+			if (Game.getSetting(131) == 4) {
+
+				hasTalkedToExaminer4 = true;
+
+			}
+
+			break;
+
+		case RETURNTOFEMALESTUDENT2:
+
+			if (!hasReturnedToFemaleStudent2) {
+
+				println("Walking to female student.");
+
+				DaxWalker.walkTo(femaleStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to female student.");
+
+				RSNPC[] femaleStudents = NPCs.findNearest(3634);
+				RSNPC femaleStudent = femaleStudents[0];
+				femaleStudent.adjustCameraTo();
+				femaleStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 8);
+
+				General.sleep(General.randomSD(2400, 300));
+
+				femaleStudent.adjustCameraTo();
+				femaleStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 8);
+
+				General.sleep(General.randomSD(2400, 300));
+
+				hasReturnedToFemaleStudent2 = true;
+
+			}
+
+			break;
+
+		case RETURNTOORANGESTUDENT2:
+
+			if (!hasReturnedToStudentInOrange2) {
+
+				println("Walking to student in orange.");
+
+				DaxWalker.walkTo(orangeStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to student in orange.");
+
+				RSNPC[] orangeStudents = NPCs.findNearest(3633);
+				RSNPC orangeStudent = orangeStudents[0];
+				orangeStudent.adjustCameraTo();
+				orangeStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 5);
+
+				General.sleep(General.randomSD(2400, 300));
+
+				hasReturnedToStudentInOrange = true;
+
+			}
+
+			break;
+
+		case RETURNTOGREENSTUDENT2:
+
+			if (!hasReturnedToStudentInGreen2) {
+
+				println("Walking to student in green.");
+
+				DaxWalker.walkTo(greenStudent.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				println("Talking to student in green.");
+
+				RSNPC[] greenStudents = NPCs.findNearest(3632);
+				RSNPC greenStudent = greenStudents[0];
+				greenStudent.adjustCameraTo();
+				greenStudent.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 5);
+				General.sleep(General.randomSD(2400, 300));
+
+				hasReturnedToStudentInGreen2 = true;
+
+			}
+
+			break;
+
+		case TALKTOEXAMINER5:
+
+			if (!hasReturnedToExamCentre4) {
+
+				println("Returning to Exam Centre.");
+
+				DaxWalker.walkTo(examCentre.getRandomTile());
+				General.sleep(1800, 2400);
+
+				if (examCentre.contains(Player.getPosition())) {
+
+					hasReturnedToExamCentre4 = true;
+
+				}
+
+			}
+
+			if (Game.getSetting(131) == 4) {
+
+				println("Talking to Examiner.");
+
+				RSNPC[] Examiners = NPCs.findNearest("Examiner");
+				RSNPC Examiner = Examiners[0];
+				Examiner.adjustCameraTo();
+				Examiner.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 2);
+				convoWait("I am ready", 0);
+				convoWait("c", 3);
+				convoWait("Samples cleaned,", 0);
+				convoWait("c", 3);
+				convoWait("Brush carefully and slowly", 0);
+				convoWait("c", 3);
+				convoWait("Handle bones very carefully", 0);
+				convoWait("c", 8);
+				General.sleep(General.randomSD(2400, 300));
+
+				break;
+
+			}
+
+			if (Game.getSetting(131) == 5) {
+
+				hasTalkedToExaminer4 = true;
+
+			}
+
+			break;
+
+		case hasSearchedCupboards:
+
+			if (Inventory.find(669).length == 0) {
+
+				println("Walking to first cupboard to get specimen jar.");
+
+				DaxWalker.walkTo(cupboard1.getRandomTile());
+				General.sleep(General.randomSD(4800, 300));
+
+				if (Objects.findNearest(10, 17302) != null) {
+
+					println("Opening cupboard.");
+
+					RSObject[] unopenedCupboard1 = Objects.findNearest(10, 17302);
+					unopenedCupboard1[0].click("Open");
+					General.sleep(General.randomSD(4800, 300));
+
+				}
+
+				if (Objects.findNearest(10, 17303) != null) {
+
+					RSObject[] openedCupboard1 = Objects.findNearest(10, 17303);
+					openedCupboard1[0].click("Search");
+					General.sleep(General.randomSD(4800, 300));
+
+				}
+
+			}
+
+			if (Inventory.find(669).length == 1 && Inventory.find(675).length == 0) {
+
+				println("Walking to second cupboard to get rock pick.");
+
+				DaxWalker.walkTo(cupboard2.getRandomTile());
+				General.sleep(General.randomSD(4800, 300));
+
+				if (Objects.findNearest(10, 17300) != null) {
+
+					RSObject[] unopenedCupboard2 = Objects.findNearest(10, 17300);
+					unopenedCupboard2[0].click("Open");
+					General.sleep(General.randomSD(4800, 300));
+
+				}
+
+				if (Objects.findNearest(10, 17301) != null) {
+
+					RSObject[] openedCupboard2 = Objects.findNearest(10, 17301);
+					openedCupboard2[0].click("Search");
+					General.sleep(General.randomSD(4800, 300));
+
+				}
+
+			}
+
+			if (Inventory.find(669).length == 1 && Inventory.find(675).length == 1) {
+
+				hasSearchedCupboards = true;
+
+			}
+
+			break;
 		}
 		return 50;
+
 	}
 
 	@Override
@@ -466,8 +1026,10 @@ public class TheDigSite extends Script implements Loopable {
 	private enum State {
 
 		PREP, WALKTOEXAMCENTRE, TALKTOEXAMINER, WALKTOVARROCKMUSEUM, TALKTOCURATOR, RETURNTOEXAMCENTRE, TALKTOEXAMINER2,
-		FINDTEDDYBEAR, FINDPANNINGTRAY, TALKTOPANNINGGUIDE, PANNING
-
+		FINDTEDDYBEAR, FINDPANNINGTRAY, TALKTOPANNINGGUIDE, PANNING, STEALFROMWORKMAN, TALKTOFEMALESTUDENT,
+		TALKTOORANGESTUDENT, TALKTOGREENSTUDENT, RETURNTOEXAMCENTRE2, TALKTOEXAMINER3, RETURNTOFEMALESTUDENT,
+		RETURNTOORANGESTUDENT, RETURNTOGREENSTUDENT, TALKTOEXAMINER4, RETURNTOFEMALESTUDENT2, RETURNTOORANGESTUDENT2,
+		RETURNTOGREENSTUDENT2, TALKTOEXAMINER5, hasSearchedCupboards,
 	}
 
 	private State getState() {
@@ -494,6 +1056,36 @@ public class TheDigSite extends Script implements Loopable {
 			state = State.TALKTOPANNINGGUIDE;
 		} else if (!hasFoundSpecialCup && hasTalkedToPanningGuide) {
 			state = State.PANNING;
+		} else if (!hasFoundAnimalSkullAndSpecimenBrush && hasFoundSpecialCup) {
+			state = State.STEALFROMWORKMAN;
+		} else if (!hasTalkedToFemaleStudent && hasFoundAnimalSkullAndSpecimenBrush) {
+			state = State.TALKTOFEMALESTUDENT;
+		} else if (!hasTalkedToStudentInOrange && hasTalkedToFemaleStudent) {
+			state = State.TALKTOORANGESTUDENT;
+		} else if (!hasTalkedToStudentInGreen && hasTalkedToStudentInOrange) {
+			state = State.TALKTOGREENSTUDENT;
+		} else if (!hasReturnedToExamCentre2 && hasTalkedToStudentInGreen) {
+			state = State.RETURNTOEXAMCENTRE2;
+		} else if (!hasTalkedToExaminer3 && hasReturnedToExamCentre2) {
+			state = State.TALKTOEXAMINER3;
+		} else if (!hasReturnedToFemaleStudent && hasTalkedToExaminer3) {
+			state = State.RETURNTOFEMALESTUDENT;
+		} else if (!hasReturnedToStudentInOrange && hasReturnedToFemaleStudent) {
+			state = State.RETURNTOORANGESTUDENT;
+		} else if (!hasReturnedToStudentInGreen && hasReturnedToStudentInOrange) {
+			state = State.RETURNTOGREENSTUDENT;
+		} else if (!hasTalkedToExaminer4 && hasReturnedToStudentInGreen) {
+			state = State.TALKTOEXAMINER4;
+		} else if (!hasReturnedToFemaleStudent2 && hasTalkedToExaminer4) {
+			state = State.RETURNTOFEMALESTUDENT2;
+		} else if (!hasReturnedToStudentInOrange2 && hasReturnedToFemaleStudent2) {
+			state = State.RETURNTOORANGESTUDENT2;
+		} else if (!hasReturnedToStudentInGreen2 && hasReturnedToStudentInOrange2) {
+			state = State.RETURNTOGREENSTUDENT2;
+		} else if (!hasTalkedToExaminer5 && hasReturnedToStudentInGreen2) {
+			state = State.TALKTOEXAMINER5;
+		} else if (!hasSearchedCupboards && hasTalkedToExaminer5) {
+			state = State.hasSearchedCupboards;
 		}
 		return state;
 	}
