@@ -55,17 +55,28 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasTalkedToStudentInGreen = true;
 	boolean hasReturnedToExamCentre2 = true;
 	boolean hasTalkedToExaminer3 = true;
+	boolean hasWalkedToFemaleStudent2 = true;
 	boolean hasReturnedToFemaleStudent = true;
+	boolean hasWalkedToStudentInOrange2 = true;
 	boolean hasReturnedToStudentInOrange = true;
+	boolean hasWalkedToStudentInGreen2 = true;
 	boolean hasReturnedToStudentInGreen = true;
 	boolean hasReturnedToExamCentre3 = true;
 	boolean hasTalkedToExaminer4 = true;
-	boolean hasReturnedToFemaleStudent2 = true;
+	boolean hasWalkedToFemaleStudent3 = true;
+	boolean hasReturnedToFemaleStudent2a = true;
+	boolean hasReturnedToFemaleStudent2b = true;
+	boolean hasWalkedToStudentInOrange3 = true;
 	boolean hasReturnedToStudentInOrange2 = true;
+	boolean hasWalkedToStudentInGreen3 = true;
 	boolean hasReturnedToStudentInGreen2 = true;
 	boolean hasReturnedToExamCentre4 = true;
 	boolean hasTalkedToExaminer5 = true;
-	boolean hasSearchedCupboards;
+	boolean hasSearchedCupboards = true;
+	boolean hasWalkedToDigsite7 = true;
+	boolean hasFoundAncientTalisman = true;
+	boolean hasReturnedToExamCentre5;
+	boolean hasTalkedToExpert;
 
 	RSArea examCentre = new RSArea(new RSTile(3361, 3342, 0), new RSTile(3363, 3340, 0));
 	RSArea museum = new RSArea(new RSTile(3258, 3450, 0), new RSTile(3254, 3447, 0));
@@ -78,6 +89,7 @@ public class TheDigSite extends Script implements Loopable {
 	RSArea greenStudent = new RSArea(new RSTile(3362, 3400, 0), new RSTile(3364, 3398, 0));
 	RSArea cupboard1 = new RSArea(new RSTile(3355, 3333, 0), new RSTile(3354, 3333, 0));
 	RSArea cupboard2 = new RSArea(new RSTile(3356, 3336, 0), new RSTile(3355, 3336, 0));
+	RSArea digsite7 = new RSArea(new RSTile(3371, 3441, 0), new RSTile(3376, 3438, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -315,28 +327,14 @@ public class TheDigSite extends Script implements Loopable {
 				Examiner.click("Talk-to");
 				General.sleep(General.randomSD(2400, 300));
 
-//				delete
-				convoWait("c", 2);
-				convoWait("Yes", 0);
-				convoWait("c", 3);
+				convoWait("c", 5);
+				convoWait("c", 5);
 				convoWait("The", 0);
 				convoWait("c", 3);
 				convoWait("Magic", 0);
 				convoWait("c", 3);
 				convoWait("Rubber", 0);
-				convoWait("c", 6);
-//				delete
-
-//				keep
-//			convoWait("c", 5);
-//			convoWait("c", 5);
-//			convoWait("The", 0);
-//			convoWait("c", 3);
-//			convoWait("Magic", 0);
-//			convoWait("c", 3);
-//			convoWait("Rubber", 0);
-//			convoWait("c", 3);
-//				keep
+				convoWait("c", 3);
 
 			}
 
@@ -477,22 +475,24 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 
-			if (Inventory.find(671).length < 1 || Inventory.find(670).length < 1) {
+			if (hasWalkedToWorkman) {
+				if (Inventory.find(671).length < 1 || Inventory.find(670).length < 1) {
 
-				println("Stealing from Digsite workman.");
+					println("Stealing from Digsite workman.");
 
-				RSNPC[] digsiteWorkmans = NPCs.findNearest(3630);
-				RSNPC digsiteWorkman = digsiteWorkmans[0];
-				digsiteWorkman.adjustCameraTo();
-				digsiteWorkman.click("Steal-from");
-				General.sleep(General.randomSD(4800, 300));
+					RSNPC[] digsiteWorkmans = NPCs.findNearest(3630);
+					RSNPC digsiteWorkman = digsiteWorkmans[0];
+					digsiteWorkman.adjustCameraTo();
+					digsiteWorkman.click("Steal-from");
+					General.sleep(General.randomSD(4800, 300));
 
-			}
+				}
 
-			if (Inventory.find(671).length == 1 && Inventory.find(670).length == 1) {
+				if (Inventory.find(671).length == 1 && Inventory.find(670).length == 1) {
 
-				hasFoundAnimalSkullAndSpecimenBrush = true;
+					hasFoundAnimalSkullAndSpecimenBrush = true;
 
+				}
 			}
 
 			break;
@@ -513,24 +513,27 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 
-			if (Inventory.find(673).length == 1) {
+			if (hasWalkedToFemaleStudent) {
 
-				println("Talking to female student.");
+				if (Inventory.find(673).length == 1) {
 
-				RSNPC[] femaleStudents = NPCs.findNearest(3634);
-				RSNPC femaleStudent = femaleStudents[0];
-				femaleStudent.adjustCameraTo();
-				femaleStudent.click("Talk-to");
+					println("Talking to female student.");
 
-				waitForConvo("TradeRN");
-				convoWait("c", 7);
+					RSNPC[] femaleStudents = NPCs.findNearest(3634);
+					RSNPC femaleStudent = femaleStudents[0];
+					femaleStudent.adjustCameraTo();
+					femaleStudent.click("Talk-to");
 
-			}
+					waitForConvo("TradeRN");
+					convoWait("c", 7);
 
-			if (Inventory.find(673).length == 0) {
+				}
 
-				hasTalkedToFemaleStudent = true;
+				if (Inventory.find(673).length == 0) {
 
+					hasTalkedToFemaleStudent = true;
+
+				}
 			}
 
 			break;
@@ -551,24 +554,26 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 
-			if (Inventory.find(672).length == 1) {
+			if (hasWalkedToStudentInOrange) {
+				if (Inventory.find(672).length == 1) {
 
-				println("Talking to student in orange.");
+					println("Talking to student in orange.");
 
-				RSNPC[] orangeStudents = NPCs.findNearest(3633);
-				RSNPC orangeStudent = orangeStudents[0];
-				orangeStudent.adjustCameraTo();
-				orangeStudent.click("Talk-to");
+					RSNPC[] orangeStudents = NPCs.findNearest(3633);
+					RSNPC orangeStudent = orangeStudents[0];
+					orangeStudent.adjustCameraTo();
+					orangeStudent.click("Talk-to");
 
-				waitForConvo("TradeRN");
-				convoWait("c", 8);
+					waitForConvo("TradeRN");
+					convoWait("c", 8);
 
-			}
+				}
 
-			if (Inventory.find(672).length == 0) {
+				if (Inventory.find(672).length == 0) {
 
-				hasTalkedToFemaleStudent = true;
+					hasTalkedToFemaleStudent = true;
 
+				}
 			}
 
 			break;
@@ -589,24 +594,26 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 
-			if (Inventory.find(671).length == 1) {
+			if (hasWalkedToStudentInGreen) {
+				if (Inventory.find(671).length == 1) {
 
-				println("Talking to student in green.");
+					println("Talking to student in green.");
 
-				RSNPC[] greenStudents = NPCs.findNearest(3632);
-				RSNPC greenStudent = greenStudents[0];
-				greenStudent.adjustCameraTo();
-				greenStudent.click("Talk-to");
+					RSNPC[] greenStudents = NPCs.findNearest(3632);
+					RSNPC greenStudent = greenStudents[0];
+					greenStudent.adjustCameraTo();
+					greenStudent.click("Talk-to");
 
-				waitForConvo("TradeRN");
-				convoWait("c", 8);
+					waitForConvo("TradeRN");
+					convoWait("c", 8);
 
-			}
+				}
 
-			if (Inventory.find(671).length == 0) {
+				if (Inventory.find(671).length == 0) {
 
-				hasTalkedToFemaleStudent = true;
+					hasTalkedToFemaleStudent = true;
 
+				}
 			}
 
 			break;
@@ -667,13 +674,18 @@ public class TheDigSite extends Script implements Loopable {
 
 		case RETURNTOFEMALESTUDENT:
 
-			if (!hasReturnedToFemaleStudent) {
+			if (!hasWalkedToFemaleStudent2) {
 
 				println("Walking to female student.");
 
 				DaxWalker.walkTo(femaleStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
 
+				if (femaleStudent.contains(Player.getPosition())) {
+				}
+			}
+
+			if (!hasReturnedToFemaleStudent) {
 				println("Talking to female student.");
 
 				RSNPC[] femaleStudents = NPCs.findNearest(3634);
@@ -684,24 +696,26 @@ public class TheDigSite extends Script implements Loopable {
 				waitForConvo("TradeRN");
 				convoWait("c", 5);
 
-			}
-
-			if (Game.getSetting(1021) == 512) {
-
-				hasReturnedToFemaleStudent = true;
-
+				checkConvoComplete(hasReturnedToFemaleStudent, "Great, thanks for your advice");
 			}
 
 			break;
 
 		case RETURNTOORANGESTUDENT:
 
-			if (!hasReturnedToStudentInOrange) {
+			if (!hasWalkedToStudentInOrange2) {
 
 				println("Walking to student in orange.");
 
 				DaxWalker.walkTo(orangeStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
+
+				if (orangeStudent.contains(Player.getPosition())) {
+					hasWalkedToStudentInOrange2 = true;
+				}
+			}
+
+			if (!hasReturnedToStudentInOrange) {
 
 				println("Talking to student in orange.");
 
@@ -711,27 +725,29 @@ public class TheDigSite extends Script implements Loopable {
 				orangeStudent.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 5);
+				convoWait("c", 4);
 
 			}
 
-			if (Game.getSetting(1021) == 0) {
-
-				hasReturnedToStudentInOrange = true;
-
-			}
+			checkConvoComplete(hasReturnedToStudentInOrange, "Thanks for the information.");
 
 			break;
 
 		case RETURNTOGREENSTUDENT:
 
-			if (!hasReturnedToStudentInGreen) {
+			if (!hasWalkedToStudentInGreen2) {
 
 				println("Walking to student in green.");
 
 				DaxWalker.walkTo(greenStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
 
+				if (greenStudent.contains(Player.getPosition())) {
+					hasWalkedToStudentInGreen2 = true;
+				}
+			}
+
+			if (!hasReturnedToStudentInGreen) {
 				println("Talking to student in green.");
 
 				RSNPC[] greenStudents = NPCs.findNearest(3632);
@@ -740,11 +756,10 @@ public class TheDigSite extends Script implements Loopable {
 				greenStudent.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 5);
-				General.sleep(General.randomSD(2400, 300));
+				convoWait("c", 4);
+				General.sleep(General.randomSD(1200, 300));
 
-				hasReturnedToStudentInGreen = true;
-
+				checkConvoComplete(hasReturnedToStudentInGreen, "Okay, I'll");
 			}
 
 			break;
@@ -787,8 +802,6 @@ public class TheDigSite extends Script implements Loopable {
 				convoWait("c", 5);
 				General.sleep(General.randomSD(2400, 300));
 
-				break;
-
 			}
 
 			if (Game.getSetting(131) == 4) {
@@ -801,12 +814,19 @@ public class TheDigSite extends Script implements Loopable {
 
 		case RETURNTOFEMALESTUDENT2:
 
-			if (!hasReturnedToFemaleStudent2) {
+			if (!hasWalkedToFemaleStudent3) {
 
 				println("Walking to female student.");
 
 				DaxWalker.walkTo(femaleStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
+
+				if (femaleStudent.contains(Player.getPosition())) {
+					hasWalkedToFemaleStudent3 = true;
+				}
+			}
+
+			if (!hasReturnedToFemaleStudent2a) {
 
 				println("Talking to female student.");
 
@@ -816,19 +836,26 @@ public class TheDigSite extends Script implements Loopable {
 				femaleStudent.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 8);
+				convoWait("c", 7);
 
 				General.sleep(General.randomSD(2400, 300));
 
+				checkConvoComplete(hasReturnedToFemaleStudent2a, "OK, I'll");
+			}
+
+			if (!hasReturnedToFemaleStudent2b) {
+
+				RSNPC[] femaleStudents = NPCs.findNearest(3634);
+				RSNPC femaleStudent = femaleStudents[0];
 				femaleStudent.adjustCameraTo();
 				femaleStudent.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 8);
+				convoWait("c", 7);
 
 				General.sleep(General.randomSD(2400, 300));
 
-				hasReturnedToFemaleStudent2 = true;
+				checkConvoComplete(hasReturnedToFemaleStudent2b, "Great, thanks");
 
 			}
 
@@ -836,13 +863,19 @@ public class TheDigSite extends Script implements Loopable {
 
 		case RETURNTOORANGESTUDENT2:
 
-			if (!hasReturnedToStudentInOrange2) {
+			if (!hasWalkedToStudentInOrange3) {
 
 				println("Walking to student in orange.");
 
 				DaxWalker.walkTo(orangeStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
 
+				if (orangeStudent.contains(Player.getPosition())) {
+					hasWalkedToStudentInOrange3 = true;
+				}
+			}
+
+			if (!hasReturnedToStudentInOrange2) {
 				println("Talking to student in orange.");
 
 				RSNPC[] orangeStudents = NPCs.findNearest(3633);
@@ -851,11 +884,11 @@ public class TheDigSite extends Script implements Loopable {
 				orangeStudent.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 5);
+				convoWait("c", 4);
 
 				General.sleep(General.randomSD(2400, 300));
 
-				hasReturnedToStudentInOrange = true;
+				checkConvoComplete(hasReturnedToStudentInOrange2, "Thanks for the");
 
 			}
 
@@ -870,6 +903,13 @@ public class TheDigSite extends Script implements Loopable {
 				DaxWalker.walkTo(greenStudent.getRandomTile());
 				General.sleep(General.randomSD(2400, 300));
 
+				if (greenStudent.contains(Player.getPosition())) {
+					hasWalkedToStudentInGreen3 = true;
+				}
+			}
+
+			if (!hasReturnedToStudentInGreen2) {
+
 				println("Talking to student in green.");
 
 				RSNPC[] greenStudents = NPCs.findNearest(3632);
@@ -881,7 +921,7 @@ public class TheDigSite extends Script implements Loopable {
 				convoWait("c", 5);
 				General.sleep(General.randomSD(2400, 300));
 
-				hasReturnedToStudentInGreen2 = true;
+				checkConvoComplete(hasReturnedToStudentInGreen2, "Okay, I'll remember");
 
 			}
 
@@ -925,8 +965,6 @@ public class TheDigSite extends Script implements Loopable {
 				convoWait("c", 8);
 				General.sleep(General.randomSD(2400, 300));
 
-				break;
-
 			}
 
 			if (Game.getSetting(131) == 5) {
@@ -937,7 +975,7 @@ public class TheDigSite extends Script implements Loopable {
 
 			break;
 
-		case hasSearchedCupboards:
+		case HASSEARCHEDCUPBOARD:
 
 			if (Inventory.find(669).length == 0) {
 
@@ -946,7 +984,7 @@ public class TheDigSite extends Script implements Loopable {
 				DaxWalker.walkTo(cupboard1.getRandomTile());
 				General.sleep(General.randomSD(4800, 300));
 
-				if (Objects.findNearest(10, 17302) != null) {
+				if (Objects.findNearest(10, 17302).length > 0) {
 
 					println("Opening cupboard.");
 
@@ -956,7 +994,7 @@ public class TheDigSite extends Script implements Loopable {
 
 				}
 
-				if (Objects.findNearest(10, 17303) != null) {
+				if (Objects.findNearest(10, 17303).length > 0) {
 
 					RSObject[] openedCupboard1 = Objects.findNearest(10, 17303);
 					openedCupboard1[0].click("Search");
@@ -973,7 +1011,7 @@ public class TheDigSite extends Script implements Loopable {
 				DaxWalker.walkTo(cupboard2.getRandomTile());
 				General.sleep(General.randomSD(4800, 300));
 
-				if (Objects.findNearest(10, 17300) != null) {
+				if (Objects.findNearest(10, 17300).length > 0) {
 
 					RSObject[] unopenedCupboard2 = Objects.findNearest(10, 17300);
 					unopenedCupboard2[0].click("Open");
@@ -981,7 +1019,7 @@ public class TheDigSite extends Script implements Loopable {
 
 				}
 
-				if (Objects.findNearest(10, 17301) != null) {
+				if (Objects.findNearest(10, 17301).length > 0) {
 
 					RSObject[] openedCupboard2 = Objects.findNearest(10, 17301);
 					openedCupboard2[0].click("Search");
@@ -998,6 +1036,103 @@ public class TheDigSite extends Script implements Loopable {
 			}
 
 			break;
+
+		case FINDANCIENTTALISMAN:
+
+			// travel(hasWalkedToDigsite7, digsite7);
+			if (!hasWalkedToDigsite7) {
+
+				println("Walking to " + "the place" + ".");
+
+				DaxWalker.walkTo(digsite7.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (digsite7.contains(Player.getPosition())) {
+					hasWalkedToDigsite7 = true;
+				}
+			}
+
+			if (!hasFoundAncientTalisman) {
+
+				if (Inventory.find(681).length == 0) {
+					
+					if (Inventory.isFull()) {
+						
+						DaxWalker.walkTo(new RSTile(3374, 3435, 0));
+						
+						General.sleep(General.random(600, 900));
+						
+						Inventory.dropAllExcept(233, 590, 229, 677, 693, 973, 676, 8007, 12625, 3008, 954,
+								670, 669, 675);
+						General.sleep(General.random(600, 900));
+						
+						DaxWalker.walkTo(new RSTile(3373, 3441, 0));
+					}
+					
+					println("Troweling for Ancient talisman.");
+					
+					if (Inventory.find(676).length > 0) {
+						RSItem[] trowels = Inventory.find(676);
+
+						trowels[0].click("Use");
+						General.sleep(600, 900);
+					} 
+
+					if (Objects.findNearest(10, 2378).length > 0) {
+						RSObject[] soils = Objects.findNearest(10, 2378);
+						soils[0].click("Use");
+						General.sleep(General.randomSD(4800, 600));
+					}
+					
+					if (Inventory.find(681).length > 0) {
+						hasFoundAncientTalisman = true;
+						println("We found it.");
+					}
+					
+				}
+
+			}
+
+			break;
+			
+		case TALKTOEXPERT:
+			
+			if (!hasReturnedToExamCentre5) {
+
+				println("Walking to Exam Centre.");
+
+				DaxWalker.walkTo(examCentre.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (examCentre.contains(Player.getPosition())) {
+					hasReturnedToExamCentre5 = true;
+					DaxWalker.walkTo(new RSTile(3358, 3335, 0));
+					General.sleep(600, 900);
+				}
+			}
+			
+			if (Inventory.find(696).length == 0) {
+
+				println("Talking to Expert.");
+
+				RSNPC[] Experts = NPCs.findNearest(3639);
+				RSNPC Expert = Experts[0];
+				Expert.adjustCameraTo();
+				Expert.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 20);
+				General.sleep(General.randomSD(2400, 300));
+
+			}
+
+			if (Inventory.find(696).length > 0) {
+
+				hasTalkedToExpert = true;
+				println("You did it.");
+
+			}
+			
 		}
 		return 50;
 
@@ -1029,7 +1164,7 @@ public class TheDigSite extends Script implements Loopable {
 		FINDTEDDYBEAR, FINDPANNINGTRAY, TALKTOPANNINGGUIDE, PANNING, STEALFROMWORKMAN, TALKTOFEMALESTUDENT,
 		TALKTOORANGESTUDENT, TALKTOGREENSTUDENT, RETURNTOEXAMCENTRE2, TALKTOEXAMINER3, RETURNTOFEMALESTUDENT,
 		RETURNTOORANGESTUDENT, RETURNTOGREENSTUDENT, TALKTOEXAMINER4, RETURNTOFEMALESTUDENT2, RETURNTOORANGESTUDENT2,
-		RETURNTOGREENSTUDENT2, TALKTOEXAMINER5, hasSearchedCupboards,
+		RETURNTOGREENSTUDENT2, TALKTOEXAMINER5, HASSEARCHEDCUPBOARD, FINDANCIENTTALISMAN, TALKTOEXPERT,
 	}
 
 	private State getState() {
@@ -1076,16 +1211,20 @@ public class TheDigSite extends Script implements Loopable {
 			state = State.RETURNTOGREENSTUDENT;
 		} else if (!hasTalkedToExaminer4 && hasReturnedToStudentInGreen) {
 			state = State.TALKTOEXAMINER4;
-		} else if (!hasReturnedToFemaleStudent2 && hasTalkedToExaminer4) {
+		} else if (!hasReturnedToFemaleStudent2a && hasTalkedToExaminer4) {
 			state = State.RETURNTOFEMALESTUDENT2;
-		} else if (!hasReturnedToStudentInOrange2 && hasReturnedToFemaleStudent2) {
+		} else if (!hasReturnedToStudentInOrange2 && hasReturnedToFemaleStudent2b) {
 			state = State.RETURNTOORANGESTUDENT2;
 		} else if (!hasReturnedToStudentInGreen2 && hasReturnedToStudentInOrange2) {
 			state = State.RETURNTOGREENSTUDENT2;
 		} else if (!hasTalkedToExaminer5 && hasReturnedToStudentInGreen2) {
 			state = State.TALKTOEXAMINER5;
 		} else if (!hasSearchedCupboards && hasTalkedToExaminer5) {
-			state = State.hasSearchedCupboards;
+			state = State.HASSEARCHEDCUPBOARD;
+		} else if (!hasFoundAncientTalisman && hasSearchedCupboards) {
+			state = State.FINDANCIENTTALISMAN;
+		} else if (!hasTalkedToExpert && hasFoundAncientTalisman) {
+			state = State.TALKTOEXPERT;
 		}
 		return state;
 	}
@@ -1206,6 +1345,35 @@ public class TheDigSite extends Script implements Loopable {
 				}
 			}
 		}
+		return false;
+	}
+
+	public boolean checkConvoComplete(boolean x, String y) {
+		if (NPCChat.getMessage().contains(y)) {
+
+			convoWait("c", 1);
+			x = true;
+			return true;
+		} else
+			return false;
+	}
+
+	public boolean travel(boolean bool, RSArea area) {
+
+		if (!bool) {
+
+			println("Walking to " + area.getClass().toString() + ".");
+
+			DaxWalker.walkTo(area.getRandomTile());
+			General.sleep(General.randomSD(2400, 300));
+
+			if (area.contains(Player.getPosition())) {
+				bool = true;
+				General.sleep(General.random(600, 900));
+				return true;
+			}
+		}
+
 		return false;
 	}
 
