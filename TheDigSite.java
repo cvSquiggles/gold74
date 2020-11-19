@@ -13,6 +13,7 @@ import org.tribot.api2007.Objects;
 import org.tribot.api2007.Player;
 import org.tribot.api2007.Skills;
 import org.tribot.api2007.Skills.SKILLS;
+import org.tribot.api2007.WebWalking;
 import org.tribot.api2007.types.RSArea;
 import org.tribot.api2007.types.RSGroundItem;
 import org.tribot.api2007.types.RSItem;
@@ -75,8 +76,20 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasSearchedCupboards = true;
 	boolean hasWalkedToDigsite7 = true;
 	boolean hasFoundAncientTalisman = true;
-	boolean hasReturnedToExamCentre5;
-	boolean hasTalkedToExpert;
+	boolean hasReturnedToExamCentre5 = true;
+	boolean hasTalkedToExpert = true;
+	boolean hasWalkedToWorkman2 = true;
+	boolean hasTalkedToWorkman2 = true;
+	boolean hasWalkedToWestWinch = true;
+	boolean hasClimbedDownWest = true;
+	boolean hasWalkedToBricks = true;
+	boolean hasSearchedBricks = true;
+	boolean hasReturnedToCavernStart = true;
+	boolean hasFoundArceniaRoot = true;
+	boolean hasWalkedToNorthEastWinch = true;
+	boolean hasClimbedDownNorthEast = true;
+	boolean hasTalkedToDoug;
+	boolean hasFoundChemicalPowder;
 
 	RSArea examCentre = new RSArea(new RSTile(3361, 3342, 0), new RSTile(3363, 3340, 0));
 	RSArea museum = new RSArea(new RSTile(3258, 3450, 0), new RSTile(3254, 3447, 0));
@@ -90,6 +103,12 @@ public class TheDigSite extends Script implements Loopable {
 	RSArea cupboard1 = new RSArea(new RSTile(3355, 3333, 0), new RSTile(3354, 3333, 0));
 	RSArea cupboard2 = new RSArea(new RSTile(3356, 3336, 0), new RSTile(3355, 3336, 0));
 	RSArea digsite7 = new RSArea(new RSTile(3371, 3441, 0), new RSTile(3376, 3438, 0));
+	RSArea workmanArea2 = new RSArea(new RSTile(3367, 3420, 0), new RSTile(3372, 3417, 0));
+	RSArea westWinch = new RSArea(new RSTile(3350, 3418, 0), new RSTile(3355, 3415, 0));
+	RSArea cavernStart = new RSArea(new RSTile(3366, 9828, 0), new RSTile(3370, 9826, 0));
+	RSArea bricksArea = new RSArea(new RSTile(3380, 9827, 0), new RSTile(3377, 9828, 0));
+	RSArea northEastWinch = new RSArea(new RSTile(3368, 3430, 0), new RSTile(3372, 3426, 0));
+	RSArea cavernStart2 = new RSArea(new RSTile(3351, 9819, 0), new RSTile(3353, 9816, 0));
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -1055,48 +1074,48 @@ public class TheDigSite extends Script implements Loopable {
 			if (!hasFoundAncientTalisman) {
 
 				if (Inventory.find(681).length == 0) {
-					
+
 					if (Inventory.isFull()) {
-						
+
 						DaxWalker.walkTo(new RSTile(3374, 3435, 0));
-						
+
 						General.sleep(General.random(600, 900));
-						
-						Inventory.dropAllExcept(233, 590, 229, 677, 693, 973, 676, 8007, 12625, 3008, 954,
-								670, 669, 675);
+
+						Inventory.dropAllExcept(233, 590, 229, 677, 693, 973, 676, 8007, 12625, 3008, 954, 670, 669,
+								675);
 						General.sleep(General.random(600, 900));
-						
+
 						DaxWalker.walkTo(new RSTile(3373, 3441, 0));
 					}
-					
+
 					println("Troweling for Ancient talisman.");
-					
+
 					if (Inventory.find(676).length > 0) {
 						RSItem[] trowels = Inventory.find(676);
 
 						trowels[0].click("Use");
 						General.sleep(600, 900);
-					} 
+					}
 
 					if (Objects.findNearest(10, 2378).length > 0) {
 						RSObject[] soils = Objects.findNearest(10, 2378);
 						soils[0].click("Use");
 						General.sleep(General.randomSD(4800, 600));
 					}
-					
+
 					if (Inventory.find(681).length > 0) {
 						hasFoundAncientTalisman = true;
 						println("We found it.");
 					}
-					
+
 				}
 
 			}
 
 			break;
-			
+
 		case TALKTOEXPERT:
-			
+
 			if (!hasReturnedToExamCentre5) {
 
 				println("Walking to Exam Centre.");
@@ -1110,7 +1129,7 @@ public class TheDigSite extends Script implements Loopable {
 					General.sleep(600, 900);
 				}
 			}
-			
+
 			if (Inventory.find(696).length == 0) {
 
 				println("Talking to Expert.");
@@ -1121,7 +1140,7 @@ public class TheDigSite extends Script implements Loopable {
 				Expert.click("Talk-to");
 
 				waitForConvo("TradeRN");
-				convoWait("c", 20);
+				convoWait("c", 10);
 				General.sleep(General.randomSD(2400, 300));
 
 			}
@@ -1129,10 +1148,297 @@ public class TheDigSite extends Script implements Loopable {
 			if (Inventory.find(696).length > 0) {
 
 				hasTalkedToExpert = true;
-				println("You did it.");
+
+			}
+			break;
+
+		case TALKTOWORKMAN2:
+
+			if (!hasWalkedToWorkman2) {
+
+				println("Walking to workmanArea2.");
+
+				DaxWalker.walkTo(workmanArea2.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (workmanArea2.contains(Player.getPosition())) {
+					hasWalkedToWorkman2 = true;
+				}
+			}
+
+			if (Inventory.find(696).length > 0) {
+
+				println("Talking to Workman.");
+
+				General.sleep(General.randomSD(1200, 300));
+
+				RSNPC[] Workmen = NPCs.findNearest(3630);
+				RSNPC Workman = Workmen[0];
+				Workman.adjustCameraTo();
+
+				RSItem[] invitationLetters = Inventory.find(696);
+				RSItem invitationLetter = invitationLetters[0];
+				General.sleep(600);
+				invitationLetter.click("Use");
+				General.sleep(General.randomSD(1200, 300));
+				Workman.click("Use");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 2);
+				General.sleep(General.randomSD(2400, 300));
+
+				if (Inventory.find(696).length == 0) {
+					hasTalkedToWorkman2 = true;
+				}
+
+			}
+
+			break;
+
+		case CLIMBDOWNWEST:
+
+			if (!hasWalkedToWestWinch) {
+
+				println("Walking to westWinch.");
+
+				DaxWalker.walkTo(westWinch.getRandomTile());
+				General.sleep(General.randomSD(2400, 300));
+
+				if (westWinch.contains(Player.getPosition())) {
+					hasWalkedToWestWinch = true;
+				}
+			}
+
+			if (!hasClimbedDownWest) {
+
+				if (Inventory.find(954).length == 2) {
+					RSItem[] ropes = Inventory.find(954);
+					RSItem rope = ropes[0];
+					General.sleep(600);
+					rope.click("Use");
+					General.sleep(General.randomSD(1200, 300));
+
+					RSObject[] winches = Objects.findNearest(10, 2350);
+					RSObject winch = winches[0];
+					winch.adjustCameraTo();
+					General.sleep(General.randomSD(2400, 300));
+
+					winch.click("Use");
+					General.sleep(General.randomSD(1200, 300));
+				}
+
+				if (Inventory.find(954).length < 2) {
+					RSObject[] winches = Objects.findNearest(10, 2350);
+					RSObject winch = winches[0];
+					winch.adjustCameraTo();
+					General.sleep(General.randomSD(3500, 300));
+					winch.click("Operate");
+				}
+
+				if (cavernStart.contains(Player.getPosition())) {
+					hasClimbedDownWest = true;
+				}
+			}
+
+			break;
+
+		case FINDARCENIAROOT:
+
+			if (Inventory.find(708).length == 0) {
+				if (GroundItems.findNearest(708) != null) {
+					RSGroundItem[] arceniaRoots = GroundItems.findNearest(708);
+					RSGroundItem arceniaRoot = arceniaRoots[0];
+
+					arceniaRoot.click("Take");
+
+					if (!Timing.waitCondition(new Condition() {
+
+						@Override
+						public boolean active() {
+
+							return (Inventory.find(708).length > 0);
+
+						}
+
+					}, General.random(15000, 20000)))
+						;
+				}
+			}
+
+			if (!hasFoundArceniaRoot) {
+				if (!hasWalkedToBricks) {
+
+					println("Walking to bricksArea.");
+
+					WebWalking.walkTo(new RSTile(3378, 9827, 0));
+					General.sleep(General.randomSD(4800, 300));
+
+					if (bricksArea.contains(Player.getPosition())) {
+						hasWalkedToBricks = true;
+					}
+				}
+
+				if (!hasSearchedBricks) {
+					RSObject[] bricks = Objects.findNearest(20, 2362);
+					if (bricks[0] != null) {
+						RSObject brick = bricks[0];
+						brick.adjustCameraTo();
+						General.sleep(General.randomSD(1200, 300));
+						brick.click("Search");
+						waitForConvo("TradeRN");
+						convoWait("c", 1);
+						General.sleep(General.randomSD(1200, 300));
+
+						hasSearchedBricks = true;
+					}
+
+					if (hasSearchedBricks) {
+						if (!hasReturnedToCavernStart) {
+
+							println("Returning to the cavern start.");
+
+							WebWalking.walkTo(cavernStart.getRandomTile());
+							if (!Timing.waitCondition(new Condition() {
+
+								@Override
+								public boolean active() {
+
+									return (cavernStart.contains(Player.getPosition()));
+
+								}
+
+							}, General.random(15000, 20000)))
+								;
+
+							if (cavernStart.contains(Player.getPosition())) {
+								hasReturnedToCavernStart = true;
+							}
+						}
+
+						if (hasReturnedToCavernStart) {
+
+							RSObject[] ropes = Objects.findNearest(10, 2353);
+							if (ropes[0] != null) {
+								RSObject rope = ropes[0];
+								General.sleep(General.randomSD(1200, 300));
+								rope.click("Climb-up");
+								General.sleep(General.randomSD(2400, 300));
+							}
+
+						}
+
+						if (westWinch.contains(Player.getPosition())) {
+							hasFoundArceniaRoot = true;
+						}
+					}
+				}
+
+			}
+			break;
+
+		case CLIMBDOWNNORTHEAST:
+
+			println("Go climb down north-east winch.");
+			if (!hasWalkedToNorthEastWinch) {
+
+				println("Walking to North-east winch.");
+
+				DaxWalker.walkTo(northEastWinch.getRandomTile());
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						return (northEastWinch.contains(Player.getPosition()));
+
+					}
+
+				}, General.random(15000, 20000)))
+					;
+
+				if (northEastWinch.contains(Player.getPosition())) {
+					hasWalkedToNorthEastWinch = true;
+				}
+			}
+
+			if (!hasClimbedDownNorthEast) {
+
+				if (Inventory.find(954).length == 1) {
+					RSItem[] ropes = Inventory.find(954);
+					RSItem rope = ropes[0];
+					General.sleep(600);
+					rope.click("Use");
+					General.sleep(General.randomSD(1200, 300));
+
+					RSObject[] winches = Objects.findNearest(10, 2351);
+					RSObject winch = winches[0];
+					winch.adjustCameraTo();
+					General.sleep(General.randomSD(2400, 300));
+
+					winch.click("Use");
+					General.sleep(General.randomSD(1200, 300));
+				}
+
+				if (Inventory.find(954).length == 0) {
+					RSObject[] winches = Objects.findNearest(10, 2351);
+					RSObject winch = winches[0];
+					winch.adjustCameraTo();
+					General.sleep(General.randomSD(3500, 300));
+					winch.click("Operate");
+				}
+
+				if (cavernStart2.contains(Player.getPosition())) {
+					hasClimbedDownNorthEast = true;
+				}
+			}
+
+			break;
+
+		case TALKTODOUG:
+
+			println("Talking to doug.");
+
+			if (Inventory.find(709).length == 0) {
+
+				println("Talking to Doug.");
+
+				General.sleep(General.randomSD(1200, 300));
+
+				RSNPC[] Dougs = NPCs.findNearest(3629);
+				RSNPC Doug = Dougs[0];
+				Doug.adjustCameraTo();
+				General.sleep(General.randomSD(1200, 300));
+				Doug.click("Talk-to");
+
+				waitForConvo("TradeRN");
+				convoWait("c", 2);
+				convoWait("How could I move", 0);
+				convoWait("c", 7);
+				General.sleep(General.randomSD(2400, 300));
 
 			}
 			
+			if (Inventory.find(709).length > 0) {
+
+				RSObject[] ropes = Objects.findNearest(10, 2352);
+				if (ropes[0] != null) {
+					RSObject rope = ropes[0];
+					General.sleep(General.randomSD(1200, 300));
+					rope.click("Climb-up");
+					General.sleep(General.randomSD(2400, 300));
+				}
+
+				if (northEastWinch.contains(Player.getPosition())) {
+					hasTalkedToDoug = true;
+
+				}
+			}
+			break;
+
+		case FINDCHEMICALPOWDER:
+			println("Find chem powder.");
+			General.sleep(1500);
+			break;
 		}
 		return 50;
 
@@ -1164,7 +1470,8 @@ public class TheDigSite extends Script implements Loopable {
 		FINDTEDDYBEAR, FINDPANNINGTRAY, TALKTOPANNINGGUIDE, PANNING, STEALFROMWORKMAN, TALKTOFEMALESTUDENT,
 		TALKTOORANGESTUDENT, TALKTOGREENSTUDENT, RETURNTOEXAMCENTRE2, TALKTOEXAMINER3, RETURNTOFEMALESTUDENT,
 		RETURNTOORANGESTUDENT, RETURNTOGREENSTUDENT, TALKTOEXAMINER4, RETURNTOFEMALESTUDENT2, RETURNTOORANGESTUDENT2,
-		RETURNTOGREENSTUDENT2, TALKTOEXAMINER5, HASSEARCHEDCUPBOARD, FINDANCIENTTALISMAN, TALKTOEXPERT,
+		RETURNTOGREENSTUDENT2, TALKTOEXAMINER5, HASSEARCHEDCUPBOARD, FINDANCIENTTALISMAN, TALKTOEXPERT, TALKTOWORKMAN2,
+		CLIMBDOWNWEST, FINDARCENIAROOT, CLIMBDOWNNORTHEAST, TALKTODOUG, FINDCHEMICALPOWDER
 	}
 
 	private State getState() {
@@ -1225,6 +1532,18 @@ public class TheDigSite extends Script implements Loopable {
 			state = State.FINDANCIENTTALISMAN;
 		} else if (!hasTalkedToExpert && hasFoundAncientTalisman) {
 			state = State.TALKTOEXPERT;
+		} else if (!hasTalkedToWorkman2 && hasTalkedToExpert) {
+			state = State.TALKTOWORKMAN2;
+		} else if (!hasClimbedDownWest && hasTalkedToWorkman2) {
+			state = State.CLIMBDOWNWEST;
+		} else if (!hasFoundArceniaRoot && hasClimbedDownWest) {
+			state = State.FINDARCENIAROOT;
+		} else if (!hasClimbedDownNorthEast && hasFoundArceniaRoot) {
+			state = State.CLIMBDOWNNORTHEAST;
+		} else if (!hasTalkedToDoug && hasClimbedDownNorthEast) {
+			state = State.TALKTODOUG;
+		} else if (!hasFoundChemicalPowder && hasTalkedToDoug) {
+			state = State.FINDCHEMICALPOWDER;
 		}
 		return state;
 	}
