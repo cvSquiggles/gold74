@@ -30,12 +30,15 @@ import scripts.dax_api.api_lib.DaxWalker;
 import scripts.dax_api.api_lib.models.DaxCredentials;
 import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
 
+
+
 @SuppressWarnings("deprecation")
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "The Dig Site", version = 1, description = "Does The Dig Site quest.")
 public class TheDigSite extends Script implements Loopable {
 
 	State state;
+	
 
 	boolean banking = true;
 	boolean equipping = true;
