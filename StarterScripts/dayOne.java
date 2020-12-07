@@ -1,4 +1,4 @@
-package scripts;
+package scripts.StarterScripts;
 
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
@@ -20,7 +20,7 @@ import org.tribot.script.ScriptManifest;
 @SuppressWarnings("deprecation") 
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "Rune Mysteries", version = 0.1, description = "Day one of scripting.")
-public class dayOne extends Script implements Loopable {
+public class dayOne extends Script {
 
 	State state;
 
@@ -56,13 +56,11 @@ public class dayOne extends Script implements Loopable {
 		onStop();
 	}
 
-	@Override
 	public void onStart() {
 		// TODO Auto-generated method stub
 		println("Hello world.");
 	}
 
-	@Override
 	public int onLoop() {
 		// TODO Auto-generated method stub
 		switch (getState()) {
@@ -312,7 +310,6 @@ public class dayOne extends Script implements Loopable {
 
 	}
 
-	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
 		println("Goodbye world.");

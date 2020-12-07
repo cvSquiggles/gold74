@@ -1,4 +1,4 @@
-package scripts;
+package scripts.StarterScripts;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
@@ -18,32 +18,32 @@ import scripts.dax_api.api_lib.DaxWalker;
 import scripts.dax_api.api_lib.models.DaxCredentials;
 import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
 
+@SuppressWarnings("deprecation")
+@ScriptManifest(authors = {
+		"Slippi, Sneakles" }, category = "template", name = "TriBot_Start", version = 1, description = "Initial template.")
+public class TriBot_Start extends Script {
 
-
-@ScriptManifest(authors= {"Slippi, Sneakles"}, category = "template", name = "TriBot_Start", version = 1, description = "Initial template.")
-public class TriBot_Start extends Script implements Loopable {
-	
 	State state;
-	
+
 	@Override
-	//Initial method run by all TriBot Scripts. Executes onStart, and then begins looping until -1 is returned, or you manually stop the script via TriBot.
+	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
+	// looping until -1 is returned, or you manually stop the script via TriBot.
 	public void run() {
 		onStart();
-		
+
 		int i;
-		
-		while((i = onLoop()) != -1) {
+
+		while ((i = onLoop()) != -1) {
 			sleep(i);
 		}
-		
+
 		onStop();
 	}
 
-	@Override
 	public void onStart() {
 		// TODO Auto-generated method stub
 		println("Hello world.");
-		
+
 		DaxWalker.setCredentials(new DaxCredentialsProvider() {
 			@Override
 			public DaxCredentials getDaxCredentials() {
@@ -52,7 +52,6 @@ public class TriBot_Start extends Script implements Loopable {
 		});
 	}
 
-	@Override
 	public int onLoop() {
 		// TODO Auto-generated method stub
 		switch (getState()) {
@@ -61,24 +60,22 @@ public class TriBot_Start extends Script implements Loopable {
 		return 5;
 	}
 
-	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
 		println("Goodbye world.");
 	}
-	
-	
+
 	// State names
 	private enum State {
 
 	}
-	
+
 	// Checks if a certain condition is met, then return that state.
 	private State getState() {
 
 		return state;
 	}
-	
+
 	@SuppressWarnings("unused")
 	private boolean isCurrentlyBusy() {
 		RSItem[] invoItems = Inventory.getAll();
@@ -93,6 +90,7 @@ public class TriBot_Start extends Script implements Loopable {
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean withdrawItems(int[] x, int y) {
 
 		int i = 0;
@@ -109,6 +107,7 @@ public class TriBot_Start extends Script implements Loopable {
 
 	}
 
+	@SuppressWarnings("unused")
 	private boolean itemCheck(int[] x, int y) {
 
 		int i = 0;

@@ -1,4 +1,4 @@
-package scripts;
+package scripts.StarterScripts;
 
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
@@ -36,7 +36,7 @@ import org.tribot.api.util.abc.*;
 @SuppressWarnings({ "unused", "deprecation" })
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "DruidicRitual", version = 0.1, description = "Does the Druidic Ritual quest.")
-public class DruidicRitual extends Script implements Loopable {
+public class DruidicRitual extends Script {
 
 	State state;
 
@@ -78,7 +78,6 @@ public class DruidicRitual extends Script implements Loopable {
 		onStop();
 	}
 
-	@Override
 	public void onStart() {
 
 		println("Starting script.");
@@ -92,7 +91,6 @@ public class DruidicRitual extends Script implements Loopable {
 
 	}
 
-	@Override
 	public int onLoop() {
 		switch (getState()) {
 
@@ -589,7 +587,6 @@ public class DruidicRitual extends Script implements Loopable {
 		return 50;
 	}
 
-	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
 		println("Stopping Script");

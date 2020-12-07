@@ -1,4 +1,4 @@
-package scripts;
+package scripts.MudRunesOOP;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
@@ -23,9 +23,10 @@ import scripts.dax_api.api_lib.DaxWalker;
 import scripts.dax_api.api_lib.models.DaxCredentials;
 import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
 
+@SuppressWarnings("deprecation")
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "Mud Runes Farm", version = 1, description = "Farms mud runes.")
-public class MudRunesFarm extends Script implements Loopable {
+public class MudRunesFarm extends Script {
 
 	State state;
 
@@ -58,7 +59,6 @@ public class MudRunesFarm extends Script implements Loopable {
 		onStop();
 	}
 
-	@Override
 	public void onStart() {
 		// TODO Auto-generated method stub
 		println("Hello world.");
@@ -71,8 +71,6 @@ public class MudRunesFarm extends Script implements Loopable {
 		});
 	}
 
-	@SuppressWarnings("deprecation")
-	@Override
 	public int onLoop() {
 		// TODO Auto-generated method stub
 		switch (getState()) {
@@ -209,7 +207,7 @@ public class MudRunesFarm extends Script implements Loopable {
 				shouldCraftMudRunes = false;
 				shouldReturnToBank = true;
 			}
-			
+
 			break;
 
 		case RETURNTOBANK:
@@ -335,7 +333,6 @@ public class MudRunesFarm extends Script implements Loopable {
 		return 5;
 	}
 
-	@Override
 	public void onStop() {
 		// TODO Auto-generated method stub
 		println("Goodbye world.");
@@ -379,6 +376,7 @@ public class MudRunesFarm extends Script implements Loopable {
 		return false;
 	}
 
+	@SuppressWarnings("unused")
 	private boolean withdrawItems(int[] x, int y) {
 
 		int i = 0;
@@ -395,6 +393,7 @@ public class MudRunesFarm extends Script implements Loopable {
 
 	}
 
+	@SuppressWarnings("unused")
 	private boolean itemCheck(int[] x, int y) {
 
 		int i = 0;
@@ -580,7 +579,6 @@ public class MudRunesFarm extends Script implements Loopable {
 		return true;
 	}
 
-	@SuppressWarnings("deprecation")
 	public boolean itemBankCheckAll(int itemID) {
 		if (Inventory.find(itemID).length == 0) {
 			Banking.withdraw(0, itemID);

@@ -1,4 +1,4 @@
-package scripts;
+package scripts.StarterScripts;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
@@ -35,7 +35,7 @@ import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
 @SuppressWarnings("deprecation")
 @ScriptManifest(authors = {
 		"Slippi, Sneakles" }, category = "Mud Runes", name = "The Dig Site", version = 1, description = "Does The Dig Site quest.")
-public class TheDigSite extends Script implements Loopable {
+public class TheDigSite extends Script {
 
 	State state;
 	
@@ -51,55 +51,55 @@ public class TheDigSite extends Script implements Loopable {
 	boolean hasFoundTeddyBear = true;
 	boolean hasFoundPanningTray = true;
 	boolean hasTalkedToPanningGuide = true;
-	boolean hasWalkedToPanningPoint = true;
-	boolean hasFoundSpecialCup = true;
-	boolean hasWalkedToWorkman = true;
-	boolean hasFoundAnimalSkullAndSpecimenBrush = true;
-	boolean hasWalkedToFemaleStudent = true;
-	boolean hasTalkedToFemaleStudent = true;
-	boolean hasWalkedToStudentInOrange = true;
-	boolean hasTalkedToStudentInOrange = true;
-	boolean hasWalkedToStudentInGreen = true;
-	boolean hasTalkedToStudentInGreen = true;
-	boolean hasReturnedToExamCentre2 = true;
-	boolean hasTalkedToExaminer3 = true;
-	boolean hasWalkedToFemaleStudent2 = true;
-	boolean hasReturnedToFemaleStudent = true;
-	boolean hasWalkedToStudentInOrange2 = true;
-	boolean hasReturnedToStudentInOrange = true;
-	boolean hasWalkedToStudentInGreen2 = true;
-	boolean hasReturnedToStudentInGreen = true;
-	boolean hasReturnedToExamCentre3 = true;
-	boolean hasTalkedToExaminer4 = true;
-	boolean hasWalkedToFemaleStudent3 = true;
-	boolean hasReturnedToFemaleStudent2a = true;
-	boolean hasReturnedToFemaleStudent2b = true;
-	boolean hasWalkedToStudentInOrange3 = true;
-	boolean hasReturnedToStudentInOrange2 = true;
-	boolean hasWalkedToStudentInGreen3 = true;
-	boolean hasReturnedToStudentInGreen2 = true;
-	boolean hasReturnedToExamCentre4 = true;
-	boolean hasTalkedToExaminer5 = true;
-	boolean hasSearchedCupboards = true;
-	boolean hasWalkedToDigsite7 = true;
-	boolean hasFoundAncientTalisman = true;
-	boolean hasReturnedToExamCentre5 = true;
-	boolean hasTalkedToExpert = true;
-	boolean hasWalkedToWorkman2 = true;
-	boolean hasTalkedToWorkman2 = true;
-	boolean hasWalkedToWestWinch = true;
-	boolean hasClimbedDownWest = true;
-	boolean hasWalkedToBricks = true;
-	boolean hasSearchedBricks = true;
-	boolean hasReturnedToCavernStart = true;
-	boolean hasFoundArceniaRoot = true;
-	boolean hasWalkedToNorthEastWinch = true;
-	boolean hasClimbedDownNorthEast = true;
-	boolean hasTalkedToDoug = true;
-	boolean hasFoundChemicalPowder = true;
-	boolean hasFoundLiquid = true;
-	boolean hasReturnedToExamCentre6 = true;
-	boolean hasTalkedToExpert2 = true;
+	boolean hasWalkedToPanningPoint;
+	boolean hasFoundSpecialCup;
+	boolean hasWalkedToWorkman;
+	boolean hasFoundAnimalSkullAndSpecimenBrush;
+	boolean hasWalkedToFemaleStudent;
+	boolean hasTalkedToFemaleStudent;
+	boolean hasWalkedToStudentInOrange;
+	boolean hasTalkedToStudentInOrange;
+	boolean hasWalkedToStudentInGreen;
+	boolean hasTalkedToStudentInGreen;
+	boolean hasReturnedToExamCentre2;
+	boolean hasTalkedToExaminer3;
+	boolean hasWalkedToFemaleStudent2;
+	boolean hasReturnedToFemaleStudent;
+	boolean hasWalkedToStudentInOrange2;
+	boolean hasReturnedToStudentInOrange;
+	boolean hasWalkedToStudentInGreen2;
+	boolean hasReturnedToStudentInGreen;
+	boolean hasReturnedToExamCentre3;
+	boolean hasTalkedToExaminer4;
+	boolean hasWalkedToFemaleStudent3;
+	boolean hasReturnedToFemaleStudent2a;
+	boolean hasReturnedToFemaleStudent2b;
+	boolean hasWalkedToStudentInOrange3;
+	boolean hasReturnedToStudentInOrange2;
+	boolean hasWalkedToStudentInGreen3;
+	boolean hasReturnedToStudentInGreen2;
+	boolean hasReturnedToExamCentre4;
+	boolean hasTalkedToExaminer5;
+	boolean hasSearchedCupboards;
+	boolean hasWalkedToDigsite7;
+	boolean hasFoundAncientTalisman;
+	boolean hasReturnedToExamCentre5;
+	boolean hasTalkedToExpert;
+	boolean hasWalkedToWorkman2;
+	boolean hasTalkedToWorkman2;
+	boolean hasWalkedToWestWinch;
+	boolean hasClimbedDownWest;
+	boolean hasWalkedToBricks;
+	boolean hasSearchedBricks;
+	boolean hasReturnedToCavernStart;
+	boolean hasFoundArceniaRoot;
+	boolean hasWalkedToNorthEastWinch;
+	boolean hasClimbedDownNorthEast;
+	boolean hasTalkedToDoug;
+	boolean hasFoundChemicalPowder;
+	boolean hasFoundLiquid;
+	boolean hasReturnedToExamCentre6;
+	boolean hasTalkedToExpert2;
 	boolean hasMadeCompound;
 	boolean hasExplodedRocks;
 	boolean hasWalkedToTablet;
@@ -142,7 +142,6 @@ public class TheDigSite extends Script implements Loopable {
 		onStop();
 	}
 
-	@Override
 	public void onStart() {
 
 		println("Starting script.");
@@ -156,7 +155,6 @@ public class TheDigSite extends Script implements Loopable {
 
 	}
 
-	@Override
 	public int onLoop() {
 
 		switch (getState()) {
@@ -177,7 +175,7 @@ public class TheDigSite extends Script implements Loopable {
 
 				else if (Banking.isBankScreenOpen()) {
 
-					int[] itemID = { 233, 590, 229, 1978, 1609, 973, 1059, 1061, 12625, 3008, 8007 };
+					int[] itemID = { 233, 590, 229, 1978, 1609, 973, 1059, 1061, 8007 };
 					int[] itemID2 = { 954, 8007 };
 
 					withdrawItems(itemID, 1);
@@ -2067,7 +2065,6 @@ public class TheDigSite extends Script implements Loopable {
 
 	}
 
-	@Override
 	public void onStop() {
 
 		println("Stopping script.");
