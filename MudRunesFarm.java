@@ -2,6 +2,7 @@ package scripts;
 
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Banking;
 import org.tribot.api2007.Equipment;
@@ -18,7 +19,7 @@ import org.tribot.api2007.types.RSObject;
 import org.tribot.api2007.types.RSTile;
 import org.tribot.script.Script;
 import org.tribot.script.ScriptManifest;
-
+import org.tribot.api.util.abc.ABCUtil;
 import scripts.dax_api.api_lib.DaxWalker;
 import scripts.dax_api.api_lib.models.DaxCredentials;
 import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
@@ -28,12 +29,11 @@ import scripts.dax_api.api_lib.models.DaxCredentialsProvider;
 public class MudRunesFarm extends Script implements Loopable {
 
 	State state;
-
-	boolean shouldTeleDigsite;
-	boolean shouldWalkToRuin;
+	
+	boolean shouldWalkToRuin = true;
 	boolean shouldCraftMudRunes;
 	boolean shouldReturnToBank;
-	boolean shouldBankMudRunes = true;
+	boolean shouldBankMudRunes;
 
 	int digsitePendantChargesPre = 0;
 	int digsitePendantChargesPost = 0;
@@ -42,6 +42,8 @@ public class MudRunesFarm extends Script implements Loopable {
 	RSArea ruin = new RSArea(new RSTile(3311, 3470, 0), new RSTile(3315, 3468, 0));
 	RSArea altarRoom = new RSArea(new RSTile(2655, 4832, 0), new RSTile(2662, 4827, 0));
 	RSArea castleBankRoom = new RSArea(new RSTile(2437, 3093, 0), new RSTile(2443, 3082, 0));
+
+	ABCUtil abc = new ABCUtil();
 
 	@Override
 	// Initial method run by all TriBot Scripts. Executes onStart, and then begins
@@ -77,67 +79,58 @@ public class MudRunesFarm extends Script implements Loopable {
 		// TODO Auto-generated method stub
 		switch (getState()) {
 
-		case TELEPORTTODIGSITE:
-			println("Teleporting to the digsite.");
-
-			if (Inventory.find(11194).length > 0) {
-				RSItem[] digsitePendants = Inventory.find(11194);
-				digsitePendants[0].click("Rub");
-				digsitePendantChargesPre = 5;
-				digsitePendantChargesPost = 4;
-			} else if (Inventory.find(11193).length > 0) {
-				RSItem[] digsitePendants = Inventory.find(11193);
-				digsitePendants[0].click("Rub");
-				digsitePendantChargesPre = 4;
-				digsitePendantChargesPost = 3;
-			} else if (Inventory.find(11192).length > 0) {
-				RSItem[] digsitePendants = Inventory.find(11192);
-				digsitePendants[0].click("Rub");
-				digsitePendantChargesPre = 3;
-				digsitePendantChargesPost = 2;
-			} else if (Inventory.find(11191).length > 0) {
-				RSItem[] digsitePendants = Inventory.find(11191);
-				digsitePendants[0].click("Rub");
-				digsitePendantChargesPre = 2;
-				digsitePendantChargesPost = 1;
-			} else if (Inventory.find(11190).length > 0) {
-				shouldTeleDigsite = false;
-				shouldBankMudRunes = true;
+		case WALKTORUIN:
+			
+			/* 
+			 * Determine whether or not we should move out of the game screen for a bit, and sleep for a random amount of time.
+			*/
+			if (randomSwitchStrict()) {
+				if (abc.shouldLeaveGame()) {
+					abc.leaveGame();
+					try {
+						abc.sleep(General.randomSD(14800, 9000));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						println("The sleep broke?");
+						break;
+					}
+				}
 				break;
 			}
+			
+			/*
+			 * Randomly determine whether to use alternate, or default version of this case.
+			 */
+			
+			if (randomSwitch()) {
+				
+				println("Walking to ruin alternate.");
 
-			if (!Timing.waitCondition(new Condition() {
+				DaxWalker.walkTo(ruin.getRandomTile());
 
-				@Override
-				public boolean active() {
+				areaWait(ruin);
 
-					return (Player.getAnimation() == 714);
+				if (ruin.contains(Player.getPosition())) {
 
+					RSObject[] ruins = Objects.findNearest(10, 34816);
+					ruins[0].click("Enter");
+					General.sleep(General.randomSD(900, 300));
+
+					areaWait(altarRoom);
+					if (altarRoom.contains(Player.getPosition())) {
+						shouldWalkToRuin = false;
+						shouldCraftMudRunes = true;
+					} else
+						break;
 				}
 
-			}, General.random(15000, 20000)))
-				;
-
-			if (!Timing.waitCondition(new Condition() {
-
-				@Override
-				public boolean active() {
-
-					return (Player.getAnimation() == -1);
-
-				}
-
-			}, General.random(15000, 20000)))
-				;
-
-			if ((digsitePendantChargesPre - 1) == digsitePendantChargesPost) {
-				shouldTeleDigsite = false;
-				shouldWalkToRuin = true;
+				break;
 			}
-
-			break;
-
-		case WALKTORUIN:
+			
+			/*
+			 * Default version of case. 
+			 */
+			
 			println("Walking to ruin.");
 
 			DaxWalker.walkTo(ruin.getRandomTile());
@@ -161,7 +154,85 @@ public class MudRunesFarm extends Script implements Loopable {
 			break;
 
 		case CRAFTMUDRUNES:
+			
+			/* 
+			 * Determine whether or not we should move out of the game screen for a bit, and sleep for a random amount of time.
+			*/
+			if (randomSwitchStrict()) {
+				if (abc.shouldLeaveGame()) {
+					abc.leaveGame();
+					try {
+						abc.sleep(General.randomSD(14800, 9000));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						println("The sleep broke?");
+						break;
+					}
+				}
+				break;
+			}
+			
+			/*
+			 * Randomly determine whether to use alternate, or default version of this case.
+			 */
+			
+			if (randomSwitch()) {
+				
+				println("Crafting mud runes alternate.");
 
+				RSItem[] waterTalismen = Inventory.find(1444);
+				if (waterTalismen.length == 0) {
+					shouldCraftMudRunes = false;
+					break;
+				}
+
+				waterTalismen[0].click("Use");
+				General.sleep(General.randomSD(1200, 300));
+
+				RSObject[] altars = Objects.findNearest(20, 34763);
+				if (General.random(1, 100) < 17) {
+					altars[0].adjustCameraTo();
+				}
+				altars[0].click("Use");
+
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						return (Player.getAnimation() == 791);
+
+					}
+
+				}, General.random(15000, 20000)))
+					;
+
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						return (Player.getAnimation() == -1);
+
+					}
+
+				}, General.random(15000, 20000)))
+					;
+
+				General.sleep(General.randomSD(2400, 600));
+
+				if (Inventory.find(4698).length > 0) {
+					shouldCraftMudRunes = false;
+					shouldReturnToBank = true;
+				}
+
+				break;
+			}
+
+			/*
+			 * Default version of case. 
+			 */
+			
 			println("Crafting mud runes.");
 
 			RSItem[] waterTalismen = Inventory.find(1444);
@@ -209,53 +280,152 @@ public class MudRunesFarm extends Script implements Loopable {
 				shouldCraftMudRunes = false;
 				shouldReturnToBank = true;
 			}
-			
+
 			break;
 
 		case RETURNTOBANK:
+			
+			/* 
+			 * Determine whether or not we should move out of the game screen for a bit, and sleep for a random amount of time.
+			*/
+			if (randomSwitchStrict()) {
+				if (abc.shouldLeaveGame()) {
+					abc.leaveGame();
+					try {
+						abc.sleep(General.randomSD(14800, 9000));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						println("The sleep broke?");
+						break;
+					}
+				}
+				break;
+			}
+			
+			/*
+			 * Randomly determine whether to use alternate, or default version of this case.
+			 */
+			
+			if (randomSwitch()) {
+			
+				println("Returning to the bank alternate.");
 
+				DaxWalker.walkTo(altarRoom.getRandomTile());
+				General.sleep(General.randomSD(2000, 1000));
+				DaxWalker.walkToBank();
+				General.sleep(General.randomSD(1800, 600));
+
+
+				break;
+			}
+
+			/*
+			 * Default version of case.
+			 */
+			
 			println("Returning to the bank.");
 
-			RSItem[] ringOfDuelings = Equipment.find(SLOTS.RING);
-
-			ringOfDuelings[0].click("Castle");
-
-			if (!Timing.waitCondition(new Condition() {
-
-				@Override
-				public boolean active() {
-
-					return (Player.getAnimation() == 714);
-
-				}
-
-			}, General.random(15000, 20000)))
-				;
-
-			if (!Timing.waitCondition(new Condition() {
-
-				@Override
-				public boolean active() {
-
-					return (Player.getAnimation() == -1);
-
-				}
-
-			}, General.random(15000, 20000)))
-				;
-
-			General.sleep(General.randomSD(1200, 300));
-
-			if (castleBankRoom.contains(Player.getPosition())) {
-
-				shouldReturnToBank = false;
-				shouldBankMudRunes = true;
-
-			}
+			DaxWalker.walkToBank();
+			General.sleep(General.randomSD(1800, 600));
 
 			break;
 
 		case BANKMUDRUNES:
+			
+			/* 
+			 * Determine whether or not we should move out of the game screen for a bit, and sleep for a random amount of time.
+			*/
+			if (randomSwitchStrict()) {
+				if (abc.shouldLeaveGame()) {
+					abc.leaveGame();
+					try {
+						abc.sleep(General.randomSD(14800, 9000));
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						println("The sleep broke?");
+						break;
+					}
+				}
+				break;
+			}
+			
+			/*
+			 * Randomly determine whether to use alternate, or default version of this case.
+			 */
+			
+			if (randomSwitch()) {
+				
+				println("Banking mud runes and restocking alternate.");
+
+				Banking.openBank();
+
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						return (Banking.isBankLoaded());
+
+					}
+
+				}, General.random(15000, 20000)))
+					;
+
+				if (!Banking.isBankLoaded()) {
+					break;
+				}
+
+				Banking.depositAll();
+
+				if (!equipmentBankCheck(SLOTS.RING, 2552)) {
+					break;
+				}
+
+				if (!equipmentBankCheck(SLOTS.AMULET, 5521)) {
+					break;
+				}
+
+				if (!itemBankCheck(1444)) {
+					break;
+				}
+
+				if (Inventory.findList(11191, 11192, 11193, 11194).size() == 0) {
+					itemBankCheck(11194);
+				}
+
+				if (!itemBankCheckAll(7936)) {
+					break;
+				}
+
+				Banking.close();
+
+				if (!Timing.waitCondition(new Condition() {
+
+					@Override
+					public boolean active() {
+
+						return (!Banking.isBankLoaded());
+
+					}
+
+				}, General.random(15000, 20000)))
+					;
+
+				if (Banking.isBankLoaded()) {
+					break;
+				} else {
+					shouldBankMudRunes = false;
+					shouldWalkToRuin = true;
+				}
+
+				General.sleep(1500);
+
+				break;
+			}
+			
+			/*
+			 * Default version of case.
+			 */
 
 			println("Banking mud runes and restocking.");
 
@@ -317,17 +487,10 @@ public class MudRunesFarm extends Script implements Loopable {
 				break;
 			} else {
 				shouldBankMudRunes = false;
-				shouldTeleDigsite = true;
+				shouldWalkToRuin = true;
 			}
 
 			General.sleep(1500);
-
-			break;
-
-		case WAITING:
-			println("Waiting.");
-
-			General.sleep(15000);
 
 			break;
 
@@ -343,14 +506,13 @@ public class MudRunesFarm extends Script implements Loopable {
 
 	// State names
 	private enum State {
-		TELEPORTTODIGSITE, WAITING, WALKTORUIN, CRAFTMUDRUNES, RETURNTOBANK, BANKMUDRUNES
+		WALKTORUIN, CRAFTMUDRUNES, RETURNTOBANK, BANKMUDRUNES
 	}
 
 	// Checks if a certain condition is met, then return that state.
 	private State getState() {
-		if (shouldTeleDigsite) {
-			state = State.TELEPORTTODIGSITE;
-		} else if (shouldWalkToRuin) {
+		
+		if (shouldWalkToRuin) {
 			state = State.WALKTORUIN;
 		} else if (shouldCraftMudRunes) {
 			state = State.CRAFTMUDRUNES;
@@ -358,8 +520,6 @@ public class MudRunesFarm extends Script implements Loopable {
 			state = State.RETURNTOBANK;
 		} else if (shouldBankMudRunes) {
 			state = State.BANKMUDRUNES;
-		} else {
-			state = State.WAITING;
 		}
 
 		return state;
@@ -427,6 +587,20 @@ public class MudRunesFarm extends Script implements Loopable {
 		} else {
 			return false;
 		}
+	}
+
+	public boolean randomSwitch() {
+		if (General.randomSD(50, 49) >= 50) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean randomSwitchStrict() {
+		if (General.randomSD(50, 49) >= 87) {
+			return true;
+		}
+		return false;
 	}
 
 	public boolean convoWait(String x, int y) {
@@ -605,6 +779,7 @@ public class MudRunesFarm extends Script implements Loopable {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean equipmentBankCheck(SLOTS slot, int itemID) {
 		if (Equipment.getItem(slot) == null) {
 			Banking.withdraw(1, itemID);
@@ -644,6 +819,7 @@ public class MudRunesFarm extends Script implements Loopable {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean areaWait(RSArea area) {
 		if (!Timing.waitCondition(new Condition() {
 
